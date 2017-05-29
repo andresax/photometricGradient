@@ -120,10 +120,11 @@ const std::vector<glm::vec3>& PhotometricGradient::twoImageGradient(const cv::Ma
   static_cast<NccProgram *>(nccProgram_)->setImage2ReprojTex(image2ReprojTex_);
   nccProgram_->populateTex(image1);
   static_cast<NccProgram *>(nccProgram_)->setWindow(window_NCC_);
-  nccProgram_->compute(false);
+  static_cast<NccProgram *>(nccProgram_)->setLod(levelOfDetail);
+  nccProgram_->compute(true);
   glFinish();
   logger.endEventAndPrint("Ncc ", true);
-/*
+
   //*******************GRAD NCC***********************************
   logger.startEvent();
   nccGradProgram_->setArrayBufferObj(vboSimGrad_, 4);
@@ -134,6 +135,7 @@ const std::vector<glm::vec3>& PhotometricGradient::twoImageGradient(const cv::Ma
   static_cast<NccGradientProgram *>(nccGradProgram_)->setMeanTexId(meanTex_);
   static_cast<NccGradientProgram *>(nccGradProgram_)->setReliabTexId(reliabilityTex_);
   static_cast<NccGradientProgram *>(nccGradProgram_)->setWindow(window_NCC_);
+  static_cast<NccGradientProgram *>(nccGradProgram_)->setLod(levelOfDetail);
   nccGradProgram_->populateTex(image1);
   nccGradProgram_->compute(true);
   glFinish();
@@ -174,7 +176,7 @@ const std::vector<glm::vec3>& PhotometricGradient::twoImageGradient(const cv::Ma
 
   //*/
   SwapBuffers();
-  sleep(1.0);
+  //sleep(1.0);
   //cv::imshow("mopinp",image1);cv::waitKey();
 
   logger.endEventAndPrint("\nTotal twoimages", true);
