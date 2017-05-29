@@ -2,9 +2,10 @@
 #define TYPESPHOTOMETRICGRADIENT_HPP_
 
 #include <glm.hpp>
-
-
 #include <vector>
+#include <string>
+
+
 namespace photometricGradient{
 
  
