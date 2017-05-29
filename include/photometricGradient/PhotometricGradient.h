@@ -28,6 +28,10 @@ public:
     numActiveVertices_ = numActiveVertices;
   }
 
+  void setWindowNcc(int windowNcc) {
+    window_NCC_ = windowNcc;
+  }
+
 private:
 
 
@@ -48,6 +52,7 @@ private:
   GLuint simGradTex_,gradientValuesTexture_;
 
   int numActiveVertices_;
+  int window_NCC_;
 
 };
 }

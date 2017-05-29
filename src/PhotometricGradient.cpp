@@ -13,6 +13,7 @@ PhotometricGradient::PhotometricGradient(int imageWidth, int imageHeight, GLFWwi
   window_ = window;
   imageWidth_ = imageWidth;
   imageHeight_ = imageHeight;
+  window_NCC_ = 3;
   initShaders();
 }
 
@@ -118,7 +119,7 @@ const std::vector<glm::vec3>& PhotometricGradient::twoImageGradient(const cv::Ma
   nccProgram_->setElementsBufferObj(eboSimGrad_, 6);
   static_cast<NccProgram *>(nccProgram_)->setImage2ReprojTex(image2ReprojTex_);
   nccProgram_->populateTex(image1);
-  static_cast<NccProgram *>(nccProgram_)->setWindow(3);
+  static_cast<NccProgram *>(nccProgram_)->setWindow(window_NCC_);
   nccProgram_->compute(false);
   glFinish();
   logger.endEventAndPrint("Ncc ", true);
@@ -132,7 +133,7 @@ const std::vector<glm::vec3>& PhotometricGradient::twoImageGradient(const cv::Ma
   static_cast<NccGradientProgram *>(nccGradProgram_)->setVarTexId(varTex_);
   static_cast<NccGradientProgram *>(nccGradProgram_)->setMeanTexId(meanTex_);
   static_cast<NccGradientProgram *>(nccGradProgram_)->setReliabTexId(reliabilityTex_);
-  static_cast<NccGradientProgram *>(nccGradProgram_)->setWindow(3);    //TODO shange shader with window and load from config
+  static_cast<NccGradientProgram *>(nccGradProgram_)->setWindow(window_NCC_);
   nccGradProgram_->populateTex(image1);
   nccGradProgram_->compute(true);
   glFinish();
