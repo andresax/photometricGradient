@@ -141,7 +141,7 @@ void main(){
 int end=0;
   vec3 area = vec3(0.0);
 
-  float stepX = (LOD+1)/imW;
+  float stepX = (LOD+1)/imW; 
   float stepY = (LOD+1)/imH;
 
   float curX = (minT.x);
