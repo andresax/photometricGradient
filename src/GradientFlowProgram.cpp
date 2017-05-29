@@ -1,14 +1,11 @@
-/*
- * GradientFlowProgram.cpp
- *
- *  Created on: 19/giu/2015
- *      Author: andrea
- */
-
 #include <GradientFlowProgram.h>
-
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/core/core.hpp>
+
+#define BASE_PATH_SHADERS  "photometricGradient/"
+#ifndef BASE_PATH_SHADERS
+BASE_PATH_SHADERS = ""
+#endif
 
 namespace photometricGradient{
 GradientFlowProgram::GradientFlowProgram(int imageWidth, int imageHeight):
@@ -140,7 +137,7 @@ void GradientFlowProgram::compute(bool renderFrameBuf) {
 
     glEnableVertexAttribArray(posAttribId_);
     glBindBuffer(GL_ARRAY_BUFFER, arrayBufferObj_);
-    glVertexAttribPointer(posAttribId_, 3, GL_FLOAT, GL_FALSE, 0, 0);
+    glVertexAttribPointer(posAttribId_, 4, GL_FLOAT, GL_FALSE, 0, 0);
 
     if (useElements_Indices) {
       glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementsBufferObj_);
@@ -157,9 +154,9 @@ void GradientFlowProgram::compute(bool renderFrameBuf) {
 
 void GradientFlowProgram::init() {
   shaderManager_.init();
-    shaderManager_.addShader(GL_VERTEX_SHADER, "shaders/id_grad_depth_vertex_shader.glsl");
-    shaderManager_.addShader(GL_GEOMETRY_SHADER, "shaders/id_grad_depth_geometry_shader.glsl");
-    shaderManager_.addShader(GL_FRAGMENT_SHADER, "shaders/id_grad_depth_fragment_shader.glsl");
+    shaderManager_.addShader(GL_VERTEX_SHADER, std::string(BASE_PATH_SHADERS) + "shaders/id_grad_depth_vertex_shader.glsl");
+    shaderManager_.addShader(GL_GEOMETRY_SHADER, std::string(BASE_PATH_SHADERS) + "shaders/id_grad_depth_geometry_shader.glsl");
+    shaderManager_.addShader(GL_FRAGMENT_SHADER, std::string(BASE_PATH_SHADERS) + "shaders/id_grad_depth_fragment_shader.glsl");
 
     shaderManager_.finalize();
 }

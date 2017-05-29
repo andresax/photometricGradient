@@ -2,6 +2,10 @@
 
 #include <opencv2/imgproc/imgproc.hpp>
 #include <GL/glew.h>
+#define BASE_PATH_SHADERS  "photometricGradient/"
+#ifndef BASE_PATH_SHADERS
+BASE_PATH_SHADERS = ""
+#endif
 
 namespace photometricGradient{
 NccProgram::NccProgram(int imageWidth, int imageHeight) :
@@ -116,8 +120,8 @@ void NccProgram::compute(bool renderFrameBuf) {
 
 void NccProgram::init() {
   shaderManager_.init();
-  shaderManager_.addShader(GL_VERTEX_SHADER, "shaders/ncc_vertex_shader.glsl");
-  shaderManager_.addShader(GL_FRAGMENT_SHADER, "shaders/ncc_fragment_shader.glsl");
+  shaderManager_.addShader(GL_VERTEX_SHADER, std::string(BASE_PATH_SHADERS)+"shaders/ncc_vertex_shader.glsl");
+  shaderManager_.addShader(GL_FRAGMENT_SHADER, std::string(BASE_PATH_SHADERS)+"shaders/ncc_fragment_shader.glsl");
   shaderManager_.finalize();
 }
 

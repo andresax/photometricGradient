@@ -1,5 +1,10 @@
 #include <DepthMapProgram.h>
 
+#define BASE_PATH_SHADERS  "/home/andrea/workspaceC/photometricRefinement/photometricGradient/"
+#ifndef BASE_PATH_SHADERS
+BASE_PATH_SHADERS = ""
+#endif
+
 namespace photometricGradient{
 DepthMapProgram::DepthMapProgram(int imageWidth, int imageHeight) :
     ShaderProgram(imageWidth, imageHeight) {
@@ -35,7 +40,7 @@ void DepthMapProgram::computeDepthMap(const GLuint &framebufferDepth, const glm:
 
   glEnableVertexAttribArray(posAttribDepthId_);
   glBindBuffer(GL_ARRAY_BUFFER, arrayBufferObj_);
-  glVertexAttribPointer(posAttribDepthId_, 3, GL_FLOAT, GL_FALSE, 0, 0);
+  glVertexAttribPointer(posAttribDepthId_, 4, GL_FLOAT, GL_FALSE, 0, 0);
 
   if (useElements_Indices) {
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementsBufferObj_);
@@ -52,8 +57,8 @@ void DepthMapProgram::computeDepthMap(const GLuint &framebufferDepth, const glm:
 
 void DepthMapProgram::init() {
   shaderManager_.init();
-  shaderManager_.addShader(GL_VERTEX_SHADER, "shaders/depth_vertex_shader.glsl");
-  shaderManager_.addShader(GL_FRAGMENT_SHADER, "shaders/depth_fragment_shader.glsl");
+  shaderManager_.addShader(GL_VERTEX_SHADER, std::string(BASE_PATH_SHADERS)+"shaders/depth_vertex_shader.glsl");
+  shaderManager_.addShader(GL_FRAGMENT_SHADER, std::string(BASE_PATH_SHADERS)+"shaders/depth_fragment_shader.glsl");
   shaderManager_.finalize();
 }
 

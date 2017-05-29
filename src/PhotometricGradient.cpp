@@ -6,6 +6,7 @@
 #include <GradientFlowProgram.h>
 #include <GradientCollectorProgram.h>
 #include <Logger.h>
+#include <unistd.h>
 
 namespace photometricGradient{
 PhotometricGradient::PhotometricGradient(int imageWidth, int imageHeight, GLFWwindow* window) {
@@ -105,6 +106,7 @@ const std::vector<glm::vec3>& PhotometricGradient::twoImageGradient(const cv::Ma
 
   static_cast<ReprojectionProgram *>(reprojectionProgram_)->setDepthTexture(depthTexture_, depthTexture2_);
   static_cast<ReprojectionProgram *>(reprojectionProgram_)->setMvp(mvp1, mvp2);
+  static_cast<ReprojectionProgram *>(reprojectionProgram_)->setLod(levelOfDetail);
   reprojectionProgram_->populateTex(image2);
   reprojectionProgram_->compute(true);
   glFinish();
@@ -116,11 +118,11 @@ const std::vector<glm::vec3>& PhotometricGradient::twoImageGradient(const cv::Ma
   nccProgram_->setElementsBufferObj(eboSimGrad_, 6);
   static_cast<NccProgram *>(nccProgram_)->setImage2ReprojTex(image2ReprojTex_);
   nccProgram_->populateTex(image1);
-  static_cast<NccProgram *>(nccProgram_)->setWindow(3);    //TODO shange shader with window and load from config
-  nccProgram_->compute(true);
+  static_cast<NccProgram *>(nccProgram_)->setWindow(3);
+  nccProgram_->compute(false);
   glFinish();
   logger.endEventAndPrint("Ncc ", true);
-
+/*
   //*******************GRAD NCC***********************************
   logger.startEvent();
   nccGradProgram_->setArrayBufferObj(vboSimGrad_, 4);
@@ -171,7 +173,7 @@ const std::vector<glm::vec3>& PhotometricGradient::twoImageGradient(const cv::Ma
 
   //*/
   SwapBuffers();
-  //sleep(1.0);
+  sleep(1.0);
   //cv::imshow("mopinp",image1);cv::waitKey();
 
   logger.endEventAndPrint("\nTotal twoimages", true);

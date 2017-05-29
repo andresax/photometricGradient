@@ -52,7 +52,7 @@ void main(){
  // else{
  //   reproj = -vec4(1.0f, 1.0f, 1.0f, 0.0); 
   //}
-  reproj = shadowCoeff1 * vec4(image2Reproj.x, image2Reproj.x, image2Reproj.x, 0.0);
+  reproj = shadowCoeff1 *shadowCoeff2* vec4(image2Reproj.x, image2Reproj.x, image2Reproj.x, 0.0);
     
   //  reproj = shadowCoeff1*vec4(1.0f, 1.0f, 1.0f, 0.0); 
 

@@ -1,6 +1,10 @@
 #include <GradientCollectorProgram.h>
 #include <Logger.h>
 
+#define BASE_PATH_SHADERS  "photometricGradient/"
+#ifndef BASE_PATH_SHADERS
+BASE_PATH_SHADERS = ""
+#endif
 
 namespace photometricGradient{
 GradientCollectorProgram::GradientCollectorProgram(int imageWidth, int imageHeight) :
@@ -44,7 +48,7 @@ void GradientCollectorProgram::compute(bool show) {
 
   glEnableVertexAttribArray(posAttribCollId_);
   glBindBuffer(GL_ARRAY_BUFFER, arrayBufferObj_);
-  glVertexAttribPointer(posAttribCollId_, 3, GL_FLOAT, GL_FALSE, 0, 0);
+  glVertexAttribPointer(posAttribCollId_, 4, GL_FLOAT, GL_FALSE, 0, 0);
 
   if (!show)
     glEnable(GL_RASTERIZER_DISCARD);
@@ -107,10 +111,10 @@ void GradientCollectorProgram::resetTransformFeedback(int length) {
 
 void GradientCollectorProgram::init() {
   shaderManager_.init();
-  shaderManager_.addShader(GL_VERTEX_SHADER, "shaders/grad_coll_vertex_shader.glsl");
-  shaderManager_.addShader(GL_GEOMETRY_SHADER, "shaders/grad_coll_geometry_shader.glsl");
+  shaderManager_.addShader(GL_VERTEX_SHADER, std::string(BASE_PATH_SHADERS)+"shaders/grad_coll_vertex_shader.glsl");
+  shaderManager_.addShader(GL_GEOMETRY_SHADER, std::string(BASE_PATH_SHADERS)+"shaders/grad_coll_geometry_shader.glsl");
   shaderManager_.addFeedbackTransform("sumGradient");
-  shaderManager_.addShader(GL_FRAGMENT_SHADER, "shaders/grad_coll_fragment_shader.glsl");
+  shaderManager_.addShader(GL_FRAGMENT_SHADER, std::string(BASE_PATH_SHADERS)+"shaders/grad_coll_fragment_shader.glsl");
   shaderManager_.finalize();
 }
 

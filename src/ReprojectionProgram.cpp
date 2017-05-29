@@ -2,6 +2,11 @@
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/highgui.hpp>
 
+#define BASE_PATH_SHADERS  "/home/andrea/workspaceC/photometricRefinement/photometricGradient/"
+#ifndef BASE_PATH_SHADERS
+BASE_PATH_SHADERS = ""
+#endif
+
 namespace photometricGradient{
 ReprojectionProgram::ReprojectionProgram(int imageWidth, int imageHeight) :
     ShaderProgram(imageWidth, imageHeight) {
@@ -67,7 +72,7 @@ void ReprojectionProgram::compute(bool renderFrameBuf) {
 
   glEnableVertexAttribArray(posAttribReprojId_);
   glBindBuffer(GL_ARRAY_BUFFER, arrayBufferObj_);
-  glVertexAttribPointer(posAttribReprojId_, 3, GL_FLOAT, GL_FALSE, 0, 0);
+  glVertexAttribPointer(posAttribReprojId_, 4, GL_FLOAT, GL_FALSE, 0, 0);
 
   if (useElements_Indices) {
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementsBufferObj_);
@@ -94,9 +99,10 @@ void ReprojectionProgram::initializeFramebufAndTex(GLuint &imageReprojTex) {
 }
 
 void ReprojectionProgram::init() {
+
   shaderManager_.init();
-  shaderManager_.addShader(GL_VERTEX_SHADER, "shaders/reprojection_vertex_shader.glsl");
-  shaderManager_.addShader(GL_FRAGMENT_SHADER, "shaders/reprojection_fragment_shader.glsl");
+  shaderManager_.addShader(GL_VERTEX_SHADER, std::string(BASE_PATH_SHADERS)+"shaders/reprojection_vertex_shader.glsl");
+  shaderManager_.addShader(GL_FRAGMENT_SHADER, std::string(BASE_PATH_SHADERS)+"shaders/reprojection_fragment_shader.glsl");
   shaderManager_.finalize();
 }
 
