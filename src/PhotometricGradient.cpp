@@ -80,7 +80,7 @@ const std::vector<glm::vec3>& PhotometricGradient::twoImageGradient(const cv::Ma
     const photometricGradient::CameraType& cam2, int numActiveVertices, int levelOfDetail) {
   numActiveVertices_ = numActiveVertices;
   utilities::Logger logger;
-  //logger.disable();
+  logger.disable();
   glm::mat4 mvp1 = cam1.mvp;
   glm::mat4 mvp2 = cam2.mvp;
 

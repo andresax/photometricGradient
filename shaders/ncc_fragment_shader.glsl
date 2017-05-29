@@ -36,10 +36,10 @@ void main(){
   float offset = 0.995;
 
   float curC, curR, gaussianWeight, curWeight;
-  for(curRow = -W/imH; curRow < W/imH; curRow += (LOD+1)/imH){
+  for(curRow = -(LOD+1)*W/imH; curRow < (LOD+1)*W/imH; curRow += (LOD+1)/imH){
 
     if(tex1Coord.x + curRow > (1.0 - offset) && tex1Coord.x + curRow < offset){
-      for(curCol = -W/imW; curCol < W/imW; curCol += (LOD+1)/imW){
+      for(curCol = -(LOD+1)*W/imW; curCol < (LOD+1)*W/imW; curCol += (LOD+1)/imW){
         if(tex1Coord.y + curCol > (1.0 - offset) && tex1Coord.y + curCol < offset){
           curC = curCol * imW;
           curR = curRow *imH;

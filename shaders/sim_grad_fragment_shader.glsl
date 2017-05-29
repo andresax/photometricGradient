@@ -36,9 +36,9 @@ void main(){
 
   float curRow, curCol;
 
-  for(curRow = -W/imH; curRow <= W/imH; curRow += (LOD+1)/imH){
+  for(curRow = -(LOD+1)*W/imH; curRow <= (LOD+1)*W/imH; curRow += (LOD+1)/imH){
     if(tex2Coord.y + curRow>0 && tex2Coord.y + curRow<imH)
-    for(curCol = -W/imW; curCol <= W/imW; curCol += (LOD+1)/imW){
+    for(curCol = -(LOD+1)*W/imW; curCol <= (LOD+1)*W/imW; curCol += (LOD+1)/imW){
       if(tex2Coord.x + curCol>0 && tex2Coord.x + curCol<imW){
         float gaussianWeight = (1/(sigma * 2*M_PI)) * exp (-(curCol*curCol + curRow * curRow)/(2*sigma*sigma));
         float curWeight = gaussianWeight;
