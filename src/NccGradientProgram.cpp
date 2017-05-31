@@ -49,12 +49,14 @@ void NccGradientProgram::initializeFramebufAndTex(GLuint& simGradTex) {
 }
 
 void NccGradientProgram::compute(bool renderFrameBuf) {
-  if (renderFrameBuf)
+  if (renderFrameBuf){
     glBindFramebuffer(GL_FRAMEBUFFER, framebuffer_);
-  else
+    glViewport(0, 0, imageWidth_, imageHeight_);
+  }else{
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    glViewport(0, 0, imageWidth_, imageHeight_);
+  }
 
-  //glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
   GLuint attachmentsSim[1] = { GL_COLOR_ATTACHMENT0 };
   glDrawBuffers(1, attachmentsSim);

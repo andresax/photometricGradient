@@ -31,15 +31,17 @@ void main(){
   float sum1 = 0.0, sum2 = 0.0, sqsum1 = 0.0, sqsum2 = 0.0, prod12 = 0.0;
   
   float curRow, curCol;
-  float sigma = 2.0;
+  float sigma = 2.0*LOD;
 
   float offset = 0.995;
+  float step = (LOD+1);
+  //step = (1);
 
   float curC, curR, gaussianWeight, curWeight;
-  for(curRow = -(LOD+1)*W/imH; curRow < (LOD+1)*W/imH; curRow += (LOD+1)/imH){
+  for(curRow = -(step)*W/imH; curRow <= (step)*W/imH; curRow += (step)/imH){
 
     if(tex1Coord.x + curRow > (1.0 - offset) && tex1Coord.x + curRow < offset){
-      for(curCol = -(LOD+1)*W/imW; curCol < (LOD+1)*W/imW; curCol += (LOD+1)/imW){
+      for(curCol = -(step)*W/imW; curCol <= (step)*W/imW; curCol += (step)/imW){
         if(tex1Coord.y + curCol > (1.0 - offset) && tex1Coord.y + curCol < offset){
           curC = curCol * imW;
           curR = curRow *imH;

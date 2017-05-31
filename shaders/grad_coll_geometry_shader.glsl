@@ -138,11 +138,13 @@ void main(){
     v2 = pt1;
   }
 
-int end=0;
+  int end=0;
   vec3 area = vec3(0.0);
+  float step = (LOD+1);
+  //step = (1);
 
-  float stepX = (LOD+1)/imW; 
-  float stepY = (LOD+1)/imH;
+  float stepX = step/imW; 
+  float stepY = step/imH;
 
   float curX = (minT.x);
   while(curX <= (maxT.x)&&end==0){
@@ -166,13 +168,13 @@ int end=0;
           area.y = area.y + barycCoord.y;
           sumGradientTot[2] = sumGradientTot[2] + barycCoord.z * curPixelValue.xyz;
           area.z = area.z + barycCoord.z;
-          }else{
-            sumGradientTot[1] = sumGradientTot[1] + barycCoord.z * curPixelValue.xyz;
-            area.y = area.y + barycCoord.z;
-            sumGradientTot[2] = sumGradientTot[2] + barycCoord.y * curPixelValue.xyz;
-            area.z = area.z + barycCoord.y;
-          }
+        }else{
+          sumGradientTot[1] = sumGradientTot[1] + barycCoord.z * curPixelValue.xyz;
+          area.y = area.y + barycCoord.z;
+          sumGradientTot[2] = sumGradientTot[2] + barycCoord.y * curPixelValue.xyz;
+          area.z = area.z + barycCoord.y;
         }
+      }   
       curY = curY + stepY;
     }
     curX = curX + stepX;

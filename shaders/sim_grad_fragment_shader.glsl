@@ -35,10 +35,11 @@ void main(){
   float a = 0.0, b = 0.0, c = 0.0;
 
   float curRow, curCol;
-
-  for(curRow = -(LOD+1)*W/imH; curRow <= (LOD+1)*W/imH; curRow += (LOD+1)/imH){
+  float step = (LOD+1);
+  //step = (1);
+  for(curRow = -(step)*W/imH; curRow <= (step)*W/imH; curRow += (step)/imH){
     if(tex2Coord.y + curRow>0 && tex2Coord.y + curRow<imH)
-    for(curCol = -(LOD+1)*W/imW; curCol <= (LOD+1)*W/imW; curCol += (LOD+1)/imW){
+    for(curCol = -(step)*W/imW; curCol <= (step)*W/imW; curCol += step/imW){
       if(tex2Coord.x + curCol>0 && tex2Coord.x + curCol<imW){
         float gaussianWeight = (1/(sigma * 2*M_PI)) * exp (-(curCol*curCol + curRow * curRow)/(2*sigma*sigma));
         float curWeight = gaussianWeight;

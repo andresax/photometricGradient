@@ -38,11 +38,15 @@ void ReprojectionProgram::populateTex(const cv::Mat& image) {
 }
 
 void ReprojectionProgram::compute(bool renderFrameBuf) {
-  if (renderFrameBuf) {
+  
+  if (renderFrameBuf){
     glBindFramebuffer(GL_FRAMEBUFFER, framebufferReproj_);
-  } else {
+    glViewport(0, 0, imageWidth_, imageHeight_);
+  }else{
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    glViewport(0, 0, imageWidth_, imageHeight_);
   }
+
 
   GLuint attachments[2] = { GL_COLOR_ATTACHMENT0, GL_DEPTH_ATTACHMENT };
   glDrawBuffers(2, attachments);
