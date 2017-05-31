@@ -12,16 +12,16 @@ in vec4 shadowCoord1;
 layout(location = 0) out float d2mcc;
 
 //uniform sampler2DShadow shadowMap1;
-uniform  float  imW;
-uniform  float imH;
+uniform float  imW;
+uniform float imH;
 uniform sampler2D mean;
 uniform sampler2D var;
 uniform sampler2D ncc;
 uniform sampler2D img1;
 uniform sampler2D img2;
 uniform sampler2D reliability; 
-uniform  float window;
-uniform  float LOD;
+uniform float window;
+uniform float LOD;
 
 void main(){
 
@@ -64,7 +64,7 @@ void main(){
   d2mcc = rel.x * (aTot * I1.x + bTot * I2.x + cTot);
 
 
-      // d2mcc = texture(mean, tex2Coord).x;
+      // d2mcc = texture(mean, tex2Coord).x/255.0;
   //d2mcc = (aTot * I1.x + bTot * I2.x + cTot);
   //d2mcc = abs(aTot);
 
@@ -73,5 +73,5 @@ void main(){
         means = texture(mean, tex2Coord );
         vars = texture(var, tex2Coord );
         nccs = texture(ncc, tex2Coord );
-  d2mcc = means.x;*/
+  d2mcc = nccs.x/1.0;*/
 }

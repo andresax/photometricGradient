@@ -35,11 +35,11 @@ void GradientFlowProgram::populateTex(const cv::Mat &image1, const cv::Mat &imag
 
   glBindTexture(GL_TEXTURE_2D, textureObjX_);
  // glTexImage2D(GL_TEXTURE_2D, 0, GL_R32F, imageWidth_, imageHeight_, 0, GL_RED, GL_FLOAT, gradXGray.data);
-  gluBuild2DMipmaps(GL_TEXTURE_2D, GL_RED, imageWidth_, imageHeight_, GL_RED, GL_UNSIGNED_BYTE, gradXGray.data);
+  gluBuild2DMipmaps(GL_TEXTURE_2D, GL_R32F, imageWidth_, imageHeight_, GL_RED, GL_FLOAT, gradXGray.data);
 
   glBindTexture(GL_TEXTURE_2D, textureObjY_);
   //glTexImage2D(GL_TEXTURE_2D, 0, GL_R32F, imageWidth_, imageHeight_, 0, GL_RED, GL_FLOAT, gradYGray.data);
-  gluBuild2DMipmaps(GL_TEXTURE_2D, GL_RED, imageWidth_, imageHeight_, GL_RED, GL_UNSIGNED_BYTE, gradYGray.data);
+  gluBuild2DMipmaps(GL_TEXTURE_2D, GL_R32F, imageWidth_, imageHeight_, GL_RED, GL_FLOAT, gradYGray.data);
 
   imageGray.release();
   image1Gray.release();

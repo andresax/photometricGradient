@@ -3,9 +3,9 @@
 in vec2 position;
 in vec2 texcoord;
 
-out vec4 projector1TexCoord;   /*2D coordinate in camera 1*/
-out vec2 tex2Coord;   /*2D coordinate in camera 1*/
-out vec2 tex1Coord;   /*2D coordinate in camera 1*/
+out vec4 projector1TexCoord;
+out vec2 tex2Coord;
+out vec2 tex1Coord;
 
 
 void main(){

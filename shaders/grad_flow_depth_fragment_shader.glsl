@@ -49,11 +49,9 @@ void main(){
   vec3 DPj_Dy = ((Xj.z * Pj_2.xyz) - (Xj.y * Pj_3.xyz))/(Xj.z * Xj.z);
 
 
-  //Jacobian of the projection matrix with respect to the 3D point
   vec4 gradSimilarity = shadowCoeff * shadowCoeff2 * texture2DProj(gradSimilarityImg, projectorTexCoord);
-  //image gradient of second cam matrix projection
 
-  //TODO compute the grad in this shader
+  //image gradient of second cam matrix projection
   gradx = 255.0* textureProjLod(gradimage2x, projector2TexCoord,LOD);
   grady = 255.0* textureProjLod(gradimage2y, projector2TexCoord,LOD);
 
@@ -76,8 +74,8 @@ void main(){
   float denomGrad = camPointVector.x*normalFacet.x + camPointVector.y*normalFacet.y + camPointVector.z*normalFacet.z;
   float zeroapprox = 0.00000000001;
 
+  gradientContribution =  shadowCoeff * shadowCoeff2 *vec4(1.0,0.0,0.0,1.0);
   if(denomGrad> zeroapprox || denomGrad < -zeroapprox ){
-
 
     /*vec3 x = camPointVector;
     vec3 y = camPointVector2;
@@ -86,9 +84,6 @@ void main(){
     float stddev = M_PI/2;
     float coeff = min(1,1.05*exp(-((mean-angle)*(mean-angle))/(2*stddev*stddev)) );*/
     //float coeff = (1/sqrt(2*M_PI*stddev*stddev))*exp(-((mean-angle)*(mean-angle))/(2*stddev*stddev));
-
-
-
 
     vec3 x1 = normalize(camPointVector);
     vec3 x2 = normalize(camPointVector2);
@@ -125,7 +120,11 @@ void main(){
 
     gradientContribution = (3.14/1.0339)*coeff*shadowCoeff * shadowCoeff2 * f12/denomGrad * vec4(-normalFacet, 1.0);
     //gradientContribution = (3.14/1.0339)*coeff*shadowCoeff * shadowCoeff2 * f12/denomGrad * vec4(-normalFacet, 1.0);
-    gradientContribution = shadowCoeff * shadowCoeff2 * f12/denomGrad * vec4(-normalFacet.xy,1.0, 1.0);
+    //gradientContribution = shadowCoeff * shadowCoeff2 * gradx.x * vec4(-normalFacet, 1.0);
+    gradientContribution = shadowCoeff * shadowCoeff2 * f12/denomGrad * vec4(-normalFacet, 1.0);
+
+
+
     /*vec3 l = normalize(positionPoint.xyz);
     vec3 n = normalize(normalFacet);
 
@@ -139,5 +138,7 @@ void main(){
   }else{
     gradientContribution =  shadowCoeff * shadowCoeff2 *vec4(0.0,0.0,0.0,1.0);
   }
-//gradientContribution = vec4(gradSimilarity.x,f12,0.0,1.0 );
+  
+  //gradientContribution = vec4(gradSimilarity.x,0.0,0.0,1.0 );
+
 }
