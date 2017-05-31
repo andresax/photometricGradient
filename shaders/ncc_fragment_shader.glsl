@@ -30,11 +30,11 @@ void main(){
   float eps = 5.0;
   float sum1 = 0.0, sum2 = 0.0, sqsum1 = 0.0, sqsum2 = 0.0, prod12 = 0.0;
   
-  float curRow, curCol;
-  float sigma = 2.0*LOD;
-
   float offset = 0.995;
   float step = (LOD+1);
+  float curRow, curCol;
+  float sigma = 2.0;
+
   //step = (1);
 
   float curC, curR, gaussianWeight, curWeight;
@@ -47,9 +47,9 @@ void main(){
           curR = curRow *imH;
           gaussianWeight = (1/(sigma * 2 * M_PI)) * exp (-(curC * curC + curR * curR)/(2 * sigma * sigma));
           curWeight = gaussianWeight;
-          img1 = 255.0*texture(image1, tex1Coord + vec2(curCol, curRow));
+          //img1 = 255.0*texture(image1, tex1Coord + vec2(curCol, curRow));
           image2Reproj = 255.0*texture(image2Repr, tex2Coord + vec2(curCol, curRow));
-          //img1 = 255.0*textureLod(image1, tex1Coord + vec2(curCol, curRow),3);
+          img1 = 255.0*textureLod(image1, tex1Coord + vec2(curCol, curRow),LOD);
           //image2Reproj = 255.0*textureLod(image2Repr, tex2Coord + vec2(curCol, curRow),3);
           sum1 += curWeight * img1.x;
           sum2 += curWeight * image2Reproj.x;

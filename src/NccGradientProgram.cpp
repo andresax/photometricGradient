@@ -113,8 +113,8 @@ void NccGradientProgram::compute(bool renderFrameBuf) {
 void NccGradientProgram::init() {
 
   shaderManager_.init();
-  shaderManager_.addShader(GL_VERTEX_SHADER, std::string(BASE_PATH_SHADERS) + "shaders/sim_grad_vertex_shader.glsl");
-  shaderManager_.addShader(GL_FRAGMENT_SHADER, std::string(BASE_PATH_SHADERS) + "shaders/sim_grad_fragment_shader.glsl");
+  shaderManager_.addShader(GL_VERTEX_SHADER, std::string(BASE_PATH_SHADERS) + "shaders/ncc_grad_vertex_shader.glsl");
+  shaderManager_.addShader(GL_FRAGMENT_SHADER, std::string(BASE_PATH_SHADERS) + "shaders/ncc_grad_fragment_shader.glsl");
   shaderManager_.finalize();
 }
 

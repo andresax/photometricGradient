@@ -137,10 +137,10 @@ const std::vector<glm::vec3>& PhotometricGradient::twoImageGradient(const cv::Ma
   static_cast<NccGradientProgram *>(nccGradProgram_)->setWindow(window_NCC_);
   static_cast<NccGradientProgram *>(nccGradProgram_)->setLod(levelOfDetail);
   nccGradProgram_->populateTex(image1);
-  nccGradProgram_->compute(true);
+  nccGradProgram_->compute(false);
   glFinish();
   logger.endEventAndPrint("Grad Ncc ", false);
-
+/*
   //*******************GRAD Flow***********************************
   logger.startEvent();
   gradFlowProgram_->setArrayBufferObj(vertexBufferObj_, numActiveVertices_);
