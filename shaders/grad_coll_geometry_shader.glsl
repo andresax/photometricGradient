@@ -183,8 +183,8 @@ void main(){
   vec3 normal = normalize(cross((positionPointV[2]).xyz - (positionPointV[0]).xyz, (positionPointV[1]).xyz - (positionPointV[0]).xyz));
 
   for(int i = 0; i < gl_in.length(); i++){
-     float shadowCoeff = textureProj(shadowMap, shadowCoord);
-     float shadowCoeff2 = textureProj(shadowMap2, shadowCoord2);
+     float shadowCoeff = textureProj(shadowMap, shadowCoordV[i]);
+     float shadowCoeff2 = textureProj(shadowMap2, shadowCoord2V[i]);
      gl_Position = gl_in[i].gl_Position;
      shadowCoord = shadowCoordV[i];
      shadowCoord2 = shadowCoord2V[i];
