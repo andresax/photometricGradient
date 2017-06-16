@@ -7,7 +7,7 @@
 #include <GLFW/glfw3.h>
 #include <ShaderProgram.h>
 #include <OpenGLProgram.h>
-#include <types.hpp>
+#include <photometricGradient/types.hpp>
 
 namespace photometricGradient{
 class PhotometricGradient : public OpenGLProgram {

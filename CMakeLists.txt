@@ -52,6 +52,7 @@ include_directories(  ${OPENGL_INCLUDE_DIR}
                       ./external/glm/glm/
                       ./external/
                       include/photometricGradient/
+                      include/
                       ) 
 
 # ------------------------ MESSAGES ----------------------------
@@ -64,6 +65,7 @@ file(GLOB_RECURSE photometricGradient_SOURCE
                   )
 file(GLOB_RECURSE photometricGradient_H 
                   ./include/photometricGradient/*.h
+                  ./include/
                   ./include/photometricGradient/*.hpp
                   )
 
