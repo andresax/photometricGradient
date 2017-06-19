@@ -2,9 +2,9 @@
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/highgui.hpp>
 
-#define BASE_PATH_SHADERS  "/home/andrea/workspaceC/photometricRefinement/photometricGradient/"
+
 #ifndef BASE_PATH_SHADERS
-BASE_PATH_SHADERS = ""
+#define BASE_PATH_SHADERS  "photometricGradient/"
 #endif
 
 namespace photometricGradient{
