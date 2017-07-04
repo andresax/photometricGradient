@@ -41,7 +41,7 @@ protected:
 
   void SwapBuffers();
   void CaptureViewPort(cv::Mat &capture, GLenum format = GL_BGR_EXT,  GLuint ch=3);
-  void CaptureViewPortFloat(cv::Mat &capture, GLenum format = GL_BGR_EXT, GLuint ch=3);
+  void CaptureViewPortFloat(cv::Mat &capture, GLenum format = GL_BGR_EXT, GLuint ch=3, GLuint framebuf=0);
   bool initGlwf();
   void init();
   void checkLastError();

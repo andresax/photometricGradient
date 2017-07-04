@@ -58,9 +58,9 @@ void OpenGLProgram::CaptureViewPort(cv::Mat &capture, GLenum format, GLuint ch) 
   delete[] bits;
 }
 
-void OpenGLProgram::CaptureViewPortFloat(cv::Mat& capture, GLenum format, GLuint ch) {
+void OpenGLProgram::CaptureViewPortFloat(cv::Mat& capture, GLenum format, GLuint ch, GLuint framebuf) {
 
-  glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
+  glBindFramebuffer(GL_FRAMEBUFFER, framebuf);
   GLfloat * bits; //RGB bits
   GLint viewport[4]; //current viewport
 
