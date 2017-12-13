@@ -7,7 +7,7 @@
 #define BASE_PATH_SHADERS  "photometricGradient/"
 #endif
 
-namespace photometricGradient{
+namespace photometricGradient {
 NccProgram::NccProgram(int imageWidth, int imageHeight) :
     ShaderProgram(imageWidth, imageHeight) {
   imWid_ = imHid_ = nccTexId_ = wId_ = -1;
@@ -33,7 +33,11 @@ void NccProgram::initTex() {
 void NccProgram::populateTex(const cv::Mat& image) {
 
   cv::Mat image2Gray;
-  cv::cvtColor(image, image2Gray, CV_RGB2GRAY);
+  if (image.channels() > 1) {
+    cv::cvtColor(image, image2Gray, CV_RGB2GRAY);
+  } else {
+    image2Gray = image;
+  }
   glBindTexture(GL_TEXTURE_2D, imageTex_);
   //glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, imageWidth_, imageHeight_, 0, GL_RED, GL_UNSIGNED_BYTE, image2Gray.data);
 
@@ -120,8 +124,8 @@ void NccProgram::compute(bool renderFrameBuf) {
 
 void NccProgram::init() {
   shaderManager_.init();
-  shaderManager_.addShader(GL_VERTEX_SHADER, std::string(BASE_PATH_SHADERS)+"shaders/ncc_vertex_shader.glsl");
-  shaderManager_.addShader(GL_FRAGMENT_SHADER, std::string(BASE_PATH_SHADERS)+"shaders/ncc_fragment_shader.glsl");
+  shaderManager_.addShader(GL_VERTEX_SHADER, std::string(BASE_PATH_SHADERS) + "shaders/ncc_vertex_shader.glsl");
+  shaderManager_.addShader(GL_FRAGMENT_SHADER, std::string(BASE_PATH_SHADERS) + "shaders/ncc_fragment_shader.glsl");
   shaderManager_.finalize();
 }
 

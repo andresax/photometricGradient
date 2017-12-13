@@ -18,7 +18,7 @@ public:
 
   void initShaders();
   const std::vector<glm::vec3>&  twoImageGradient(const cv::Mat &image1, const cv::Mat &image2, const photometricGradient::CameraType &cam1, const photometricGradient::CameraType &cam2,//
-      int numActiveVertices, int levelOfDetail);
+      int numActiveVertices, int levelOfDetail,bool useSSD =false);
 
   void setVertexBufferObj(GLuint vertexBufferObj) {
     vertexBufferObj_ = vertexBufferObj;

@@ -17,6 +17,7 @@ uniform  float imW;
 uniform  float imH;
 uniform  float window;
 uniform  float LOD;
+uniform  float modeSSD;
 uniform sampler2D image1;
 uniform sampler2D image2Repr;
 
@@ -28,7 +29,7 @@ void main(){
   float sumWeight=0.0;
   float beta2 = 10.0;
   float eps = 5.0;
-  float sum1 = 0.0, sum2 = 0.0, sqsum1 = 0.0, sqsum2 = 0.0, prod12 = 0.0;
+  float sum1 = 0.0, sum2 = 0.0, sqsum1 = 0.0, sqsum2 = 0.0, prod12 = 0.0, diff12 = 0.0;
   
   float offset = 0.995;
   float step = (LOD+1);
@@ -56,6 +57,7 @@ void main(){
           sqsum1 += curWeight * img1.x * img1.x;
           sqsum2 += curWeight * image2Reproj.x * image2Reproj.x;
           prod12 += curWeight * img1.x * image2Reproj.x;
+          diff12 += curWeight * img1.x - image2Reproj.x;
           sumWeight += curWeight;
         }
       }
@@ -73,6 +75,7 @@ void main(){
   var = vec3(var1, var2, var12);
 
   reliability = min(var1,var2)/(min(var1, var2) + eps);
-  reliability = var1/(var1 + eps);
+  reliability = var1/(var1 + eps)*(1-modeSSD) ;//use reliability texture to save ssd if needed
+  reliability = diff12/sumWeight;//use reliability texture to save ssd if needed
 
 }

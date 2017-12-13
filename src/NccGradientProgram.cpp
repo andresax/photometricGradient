@@ -2,17 +2,15 @@
 
 #include <opencv2/imgproc/imgproc.hpp>
 
-
 #ifndef BASE_PATH_SHADERS
 #define BASE_PATH_SHADERS  "photometricGradient/"
 #endif
 
-
-namespace photometricGradient{
+namespace photometricGradient {
 NccGradientProgram::NccGradientProgram(int imageWidth, int imageHeight) :
     ShaderProgram(imageWidth, imageHeight) {
 
-  lod_=0.0;
+  lod_ = 0.0;
 }
 
 NccGradientProgram::~NccGradientProgram() {
@@ -21,7 +19,11 @@ NccGradientProgram::~NccGradientProgram() {
 void NccGradientProgram::populateTex(const cv::Mat& image) {
 
   cv::Mat image1Gray;
-  cv::cvtColor(image, image1Gray, CV_RGB2GRAY);
+  if (image.channels() > 1) {
+    cv::cvtColor(image, image1Gray, CV_RGB2GRAY);
+  } else {
+    image1Gray = image;
+  }
   //image1 texture
   glBindTexture(GL_TEXTURE_2D, image1simGradTex_);
   //glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, imageWidth_, imageHeight_, 0, GL_RED, GL_UNSIGNED_BYTE, image1Gray.data);
@@ -48,14 +50,13 @@ void NccGradientProgram::initializeFramebufAndTex(GLuint& simGradTex) {
 }
 
 void NccGradientProgram::compute(bool renderFrameBuf) {
-  if (renderFrameBuf){
+  if (renderFrameBuf) {
     glBindFramebuffer(GL_FRAMEBUFFER, framebuffer_);
     glViewport(0, 0, imageWidth_, imageHeight_);
-  }else{
+  } else {
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
     glViewport(0, 0, imageWidth_, imageHeight_);
   }
-
 
   GLuint attachmentsSim[1] = { GL_COLOR_ATTACHMENT0 };
   glDrawBuffers(1, attachmentsSim);
@@ -67,7 +68,7 @@ void NccGradientProgram::compute(bool renderFrameBuf) {
   glUniform1f(imWsimid_, static_cast<float>(imageWidth_));
   glUniform1f(imHsimid_, static_cast<float>(imageHeight_));
   glUniform1f(wId_, static_cast<float>(window_));
-    glUniform1f(lodId_, lod_);
+  glUniform1f(lodId_, lod_);
 
   glActiveTexture(GL_TEXTURE0);
   glBindTexture(GL_TEXTURE_2D, image1simGradTex_);

@@ -62,6 +62,7 @@ void main(){
 
   vec4 rel = texture(reliability, tex2Coord );
   d2mcc = rel.x * (aTot * I1.x + bTot * I2.x + cTot);
+  d2mcc = (aTot * I1.x + bTot * I2.x + cTot);
 
 
       // d2mcc = texture(mean, tex2Coord).x/255.0;

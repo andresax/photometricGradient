@@ -118,12 +118,19 @@ void main(){
   minT.y = min(min(pt1.y,pt2.y),pt0.y);
 
   //check boundary
+  // maxT.x = min(maxT.x, 1.0);
+  // maxT.y = min(maxT.y, 1.0);
+  // minT.x = max(minT.x, -1.0);
+  // minT.y = max(minT.y, -1.0);
   maxT.x = min(maxT.x, imW);
   maxT.y = min(maxT.y, imH);
   minT.x = max(minT.x, 0.0);
   minT.y = max(minT.y, 0.0);
 
   float twiceSignedArea = orientPoint(pt0, pt1, pt2);
+
+
+  if(maxT.x<2&&minT.x>-2&&maxT.y<2&&minT.y>-2){
   vec2 v0, v1, v2;
 
   switchedVertices = twiceSignedArea > 0;
@@ -179,6 +186,7 @@ void main(){
     }
     curX = curX + stepX;
   }
+ }
  
   vec3 normal = normalize(cross((positionPointV[2]).xyz - (positionPointV[0]).xyz, (positionPointV[1]).xyz - (positionPointV[0]).xyz));
 
@@ -196,8 +204,9 @@ void main(){
     if (abs(twiceSignedArea)<0.0000000000000001)
       sumGradient = vec3(0.0);
     else{
-      sumGradient = shadowCoeff * shadowCoeff2 * vec3(sumGradientTot[i].xyz/abs(twiceSignedArea/2));
+      sumGradient = shadowCoeff * shadowCoeff2 * vec3(sumGradientTot[i].xyz);//abs(twiceSignedArea/2));
     }
     EmitVertex();
+
   }
 }

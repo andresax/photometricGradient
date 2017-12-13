@@ -13,7 +13,7 @@ PhotometricGradient::PhotometricGradient(int imageWidth, int imageHeight, GLFWwi
   window_ = window;
   imageWidth_ = imageWidth;
   imageHeight_ = imageHeight;
-  window_NCC_ = 3;
+  window_NCC_ = 4;
   initShaders();
 }
 
@@ -77,7 +77,7 @@ void PhotometricGradient::initShaders() {
 }
 
 const std::vector<glm::vec3>& PhotometricGradient::twoImageGradient(const cv::Mat& image1, const cv::Mat& image2, const photometricGradient::CameraType& cam1,
-    const photometricGradient::CameraType& cam2, int numActiveVertices, int levelOfDetail) {
+    const photometricGradient::CameraType& cam2, int numActiveVertices, int levelOfDetail,bool useSSD) {
   numActiveVertices_ = numActiveVertices;
   utilities::Logger logger;
   logger.disable();
@@ -90,6 +90,7 @@ const std::vector<glm::vec3>& PhotometricGradient::twoImageGradient(const cv::Ma
   glm::vec3 t, t2;
   t = -cam1.translation * glm::transpose(cam1.rotation);
   t2 = -cam2.translation * glm::transpose(cam2.rotation);
+
 
   logger.startEvent();
 
@@ -126,21 +127,22 @@ const std::vector<glm::vec3>& PhotometricGradient::twoImageGradient(const cv::Ma
   logger.endEventAndPrint("Ncc ", true);
 
   //*******************GRAD NCC***********************************
-  logger.startEvent();
-  nccGradProgram_->setArrayBufferObj(vboSimGrad_, 4);
-  nccGradProgram_->setElementsBufferObj(eboSimGrad_, 6);
-  static_cast<NccGradientProgram *>(nccGradProgram_)->setImage2ReprojTex(image2ReprojTex_);
-  static_cast<NccGradientProgram *>(nccGradProgram_)->setNccTexId(NCCTex_);
-  static_cast<NccGradientProgram *>(nccGradProgram_)->setVarTexId(varTex_);
-  static_cast<NccGradientProgram *>(nccGradProgram_)->setMeanTexId(meanTex_);
-  static_cast<NccGradientProgram *>(nccGradProgram_)->setReliabTexId(reliabilityTex_);
-  static_cast<NccGradientProgram *>(nccGradProgram_)->setWindow(window_NCC_);
-  static_cast<NccGradientProgram *>(nccGradProgram_)->setLod(levelOfDetail);
-  nccGradProgram_->populateTex(image1);
-  nccGradProgram_->compute(true);
-  glFinish();
-  logger.endEventAndPrint("Grad Ncc ", false);
-
+  if(!useSSD){
+    logger.startEvent();
+    nccGradProgram_->setArrayBufferObj(vboSimGrad_, 4);
+    nccGradProgram_->setElementsBufferObj(eboSimGrad_, 6);
+    static_cast<NccGradientProgram *>(nccGradProgram_)->setImage2ReprojTex(image2ReprojTex_);
+    static_cast<NccGradientProgram *>(nccGradProgram_)->setNccTexId(NCCTex_);
+    static_cast<NccGradientProgram *>(nccGradProgram_)->setVarTexId(varTex_);
+    static_cast<NccGradientProgram *>(nccGradProgram_)->setMeanTexId(meanTex_);
+    static_cast<NccGradientProgram *>(nccGradProgram_)->setReliabTexId(reliabilityTex_);
+    static_cast<NccGradientProgram *>(nccGradProgram_)->setWindow(window_NCC_);
+    static_cast<NccGradientProgram *>(nccGradProgram_)->setLod(levelOfDetail);
+    nccGradProgram_->populateTex(image1);
+    nccGradProgram_->compute(true);
+    glFinish();
+    logger.endEventAndPrint("Grad Ncc ", false);
+  }
   //*******************GRAD Flow***********************************
   logger.startEvent();
   gradFlowProgram_->setArrayBufferObj(vertexBufferObj_, numActiveVertices_);
@@ -151,7 +153,11 @@ const std::vector<glm::vec3>& PhotometricGradient::twoImageGradient(const cv::Ma
   static_cast<GradientFlowProgram *>(gradFlowProgram_)->setMvp1Orig(mvp1Orig);
   static_cast<GradientFlowProgram *>(gradFlowProgram_)->setMvp2(mvp2);
   static_cast<GradientFlowProgram *>(gradFlowProgram_)->setMvp2Orig(mvp2Orig);
-  static_cast<GradientFlowProgram *>(gradFlowProgram_)->setSimGradTex(simGradTex_);
+  if(!useSSD){
+    static_cast<GradientFlowProgram *>(gradFlowProgram_)->setSimGradTex(simGradTex_);
+  }else{
+    static_cast<GradientFlowProgram *>(gradFlowProgram_)->setSimGradTex(reliabilityTex_);
+  }
   static_cast<GradientFlowProgram *>(gradFlowProgram_)->setT(t);
   static_cast<GradientFlowProgram *>(gradFlowProgram_)->setT2(t2);
 
@@ -176,7 +182,8 @@ const std::vector<glm::vec3>& PhotometricGradient::twoImageGradient(const cv::Ma
 
   //*/
   SwapBuffers();
-  //sleep(1.0);
+//  if(useSSD)
+//  sleep(10.0);
   //cv::imshow("mopinp",image1);cv::waitKey();
 
   logger.endEventAndPrint("\nTotal twoimages", true);

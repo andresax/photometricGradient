@@ -18,6 +18,7 @@ void main(){
   float shadowCoeff2 = textureProj(shadowMap2, shadowCoord2);
   float shadowCoeff1 = textureProj(shadowMap1, shadowCoord1);
 
-  reproj = shadowCoeff1 *shadowCoeff2* vec4(image2Reproj.x, image2Reproj.x, image2Reproj.x, 0.0);
+  reproj = shadowCoeff1 *shadowCoeff2* vec4(image2Reproj.x, image2Reproj.x,image2Reproj.x, 0.0);
+  //reproj = shadowCoeff1 * vec4(1.0);
   
 }

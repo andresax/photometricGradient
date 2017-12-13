@@ -2,15 +2,14 @@
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/core/core.hpp>
 
-
 #ifndef BASE_PATH_SHADERS
 #define BASE_PATH_SHADERS  "photometricGradient/"
 #endif
 
-namespace photometricGradient{
-GradientFlowProgram::GradientFlowProgram(int imageWidth, int imageHeight):
-ShaderProgram(imageWidth, imageHeight)  {
-  lod_=0.0;
+namespace photometricGradient {
+GradientFlowProgram::GradientFlowProgram(int imageWidth, int imageHeight) :
+    ShaderProgram(imageWidth, imageHeight) {
+  lod_ = 0.0;
 }
 
 GradientFlowProgram::~GradientFlowProgram() {
@@ -21,20 +20,28 @@ void GradientFlowProgram::populateTex(const cv::Mat &image1, const cv::Mat &imag
 
   /// Generate grad_x and grad_y
   cv::Mat imageGray, image1Gray, gradXGray, gradYGray;
-  cv::cvtColor(image2, imageGray, CV_RGB2GRAY);
+  if (image2.channels() > 1) {
+    cv::cvtColor(image2, imageGray, CV_RGB2GRAY);
+  } else {
+    imageGray = image2;
+  }
   /// Gradient X
   cv::Scharr(imageGray, gradXGray, CV_32F, 1, 0);
   /// Gradient Y
   cv::Scharr(imageGray, gradYGray, CV_32F, 0, 1);
 
-  cv::cvtColor(image1, image1Gray, CV_RGB2GRAY);
+  if (image1.channels() > 1) {
+    cv::cvtColor(image1, image1Gray, CV_RGB2GRAY);
+  } else {
+    image1Gray = image1;
+  }
   //image1 texture
   glBindTexture(GL_TEXTURE_2D, imageTex_);
   //glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, imageWidth_, imageHeight_, 0, GL_RED, GL_UNSIGNED_BYTE, image1Gray.data);
   gluBuild2DMipmaps(GL_TEXTURE_2D, GL_RED, imageWidth_, imageHeight_, GL_RED, GL_UNSIGNED_BYTE, image1Gray.data);
 
   glBindTexture(GL_TEXTURE_2D, textureObjX_);
- // glTexImage2D(GL_TEXTURE_2D, 0, GL_R32F, imageWidth_, imageHeight_, 0, GL_RED, GL_FLOAT, gradXGray.data);
+  // glTexImage2D(GL_TEXTURE_2D, 0, GL_R32F, imageWidth_, imageHeight_, 0, GL_RED, GL_FLOAT, gradXGray.data);
   gluBuild2DMipmaps(GL_TEXTURE_2D, GL_R32F, imageWidth_, imageHeight_, GL_RED, GL_FLOAT, gradXGray.data);
 
   glBindTexture(GL_TEXTURE_2D, textureObjY_);
@@ -89,10 +96,10 @@ void GradientFlowProgram::initializeFramebufAndTex(GLuint& gradTex) {
 }
 
 void GradientFlowProgram::compute(bool renderFrameBuf) {
-  if (renderFrameBuf){
+  if (renderFrameBuf) {
     glBindFramebuffer(GL_FRAMEBUFFER, framebuffer_);
     glViewport(0, 0, imageWidth_, imageHeight_);
-  }else{
+  } else {
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
     glViewport(0, 0, imageWidth_, imageHeight_);
   }
@@ -106,7 +113,6 @@ void GradientFlowProgram::compute(bool renderFrameBuf) {
   glDepthFunc(GL_LESS);
 
   shaderManager_.enable();
-
 
   glUniform3fv(cam1PositionId_, 1, &t_[0]);
   glUniform3fv(cam2PositionId_, 1, &t2_[0]);
@@ -158,11 +164,11 @@ void GradientFlowProgram::compute(bool renderFrameBuf) {
 
 void GradientFlowProgram::init() {
   shaderManager_.init();
-    shaderManager_.addShader(GL_VERTEX_SHADER, std::string(BASE_PATH_SHADERS) + "shaders/grad_flow_depth_vertex_shader.glsl");
-    shaderManager_.addShader(GL_GEOMETRY_SHADER, std::string(BASE_PATH_SHADERS) + "shaders/grad_flow_depth_geometry_shader.glsl");
-    shaderManager_.addShader(GL_FRAGMENT_SHADER, std::string(BASE_PATH_SHADERS) + "shaders/grad_flow_depth_fragment_shader.glsl");
+  shaderManager_.addShader(GL_VERTEX_SHADER, std::string(BASE_PATH_SHADERS) + "shaders/grad_flow_depth_vertex_shader.glsl");
+  shaderManager_.addShader(GL_GEOMETRY_SHADER, std::string(BASE_PATH_SHADERS) + "shaders/grad_flow_depth_geometry_shader.glsl");
+  shaderManager_.addShader(GL_FRAGMENT_SHADER, std::string(BASE_PATH_SHADERS) + "shaders/grad_flow_depth_fragment_shader.glsl");
 
-    shaderManager_.finalize();
+  shaderManager_.finalize();
 }
 
 void GradientFlowProgram::createAttributes() {
