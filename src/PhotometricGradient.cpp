@@ -1,5 +1,6 @@
 #include <PhotometricGradient.h>
 #include <DepthMapProgram.h>
+#include <DepthMapXYZProgram.h>
 #include <ReprojectionProgram.h>
 #include <NccProgram.h>
 #include <NccGradientProgram.h>
@@ -7,6 +8,7 @@
 #include <GradientCollectorProgram.h>
 #include <Logger.h>
 #include <unistd.h>
+#include <opencv2/highgui.hpp>
 
 namespace photometricGradient{
 PhotometricGradient::PhotometricGradient(int imageWidth, int imageHeight, GLFWwindow* window) {
@@ -14,6 +16,7 @@ PhotometricGradient::PhotometricGradient(int imageWidth, int imageHeight, GLFWwi
   imageWidth_ = imageWidth;
   imageHeight_ = imageHeight;
   window_NCC_ = 4;
+  hasWeights=true;
   initShaders();
 }
 
@@ -30,6 +33,14 @@ void PhotometricGradient::initShaders() {
   depthMapProgram_->setUseElementsIndices(false);
   static_cast<DepthMapProgram *>(depthMapProgram_)->initializeFramebufAndTex(framebufferDepth_, depthTexture_);
   static_cast<DepthMapProgram *>(depthMapProgram_)->initializeFramebufAndTex(framebufferDepth2_, depthTexture2_);
+  std::cout << "DONE" << std::endl;
+
+  //************************depthXYZ********************************
+  std::cout << "DepthMapProgram init...";
+  depthMapProgram_ = new DepthMapXYZProgram(imageWidth_, imageHeight_);
+  depthMapProgram_->initializeProgram();
+  depthMapProgram_->setUseElementsIndices(false);
+  static_cast<DepthMapXYZProgram *>(depthMapProgram_)->initializeFramebufAndTex(depthTextureXYZ_);
   std::cout << "DONE" << std::endl;
 
   //************************reprojection**************************
@@ -91,14 +102,15 @@ const std::vector<glm::vec3>& PhotometricGradient::twoImageGradient(const cv::Ma
   t = -cam1.translation * glm::transpose(cam1.rotation);
   t2 = -cam2.translation * glm::transpose(cam2.rotation);
 
-
   logger.startEvent();
 
   //******************DEPTH MAP *******************************
   logger.startEvent();
   depthMapProgram_->setArrayBufferObj(vertexBufferObj_, numActiveVertices_);
-  static_cast<DepthMapProgram *>(depthMapProgram_)->computeDepthMap(framebufferDepth_, mvp1);
-  static_cast<DepthMapProgram *>(depthMapProgram_)->computeDepthMap(framebufferDepth2_, mvp2);
+
+  static_cast<DepthMapXYZProgram *>(depthMapProgram_)->setMvp(mvp1);
+  static_cast<DepthMapXYZProgram *>(depthMapProgram_)->setCenter(cam1.center);
+  static_cast<DepthMapXYZProgram *>(depthMapProgram_)->compute(true);
   glFinish();
   logger.endEventAndPrint("Depth ", false);
 
@@ -108,6 +120,8 @@ const std::vector<glm::vec3>& PhotometricGradient::twoImageGradient(const cv::Ma
 
   static_cast<ReprojectionProgram *>(reprojectionProgram_)->setDepthTexture(depthTexture_, depthTexture2_);
   static_cast<ReprojectionProgram *>(reprojectionProgram_)->setMvp(mvp1, mvp2);
+  static_cast<ReprojectionProgram *>(reprojectionProgram_)->setCamCenter1(cam1.center);
+  static_cast<ReprojectionProgram *>(reprojectionProgram_)->setCamCenter2(cam2.center);
   static_cast<ReprojectionProgram *>(reprojectionProgram_)->setLod(levelOfDetail);
   reprojectionProgram_->populateTex(image2);
   reprojectionProgram_->compute(true);
@@ -119,13 +133,17 @@ const std::vector<glm::vec3>& PhotometricGradient::twoImageGradient(const cv::Ma
   nccProgram_->setArrayBufferObj(vboSimGrad_, 4);
   nccProgram_->setElementsBufferObj(eboSimGrad_, 6);
   static_cast<NccProgram *>(nccProgram_)->setImage2ReprojTex(image2ReprojTex_);
+  static_cast<NccProgram *>(nccProgram_)->setDepthTexture(depthTexture_);;
+  static_cast<NccProgram *>(nccProgram_)->setDepthXYZ(depthTextureXYZ_);
   nccProgram_->populateTex(image1);
   static_cast<NccProgram *>(nccProgram_)->setWindow(window_NCC_);
   static_cast<NccProgram *>(nccProgram_)->setLod(levelOfDetail);
-  nccProgram_->compute(true);
+  nccProgram_->compute(false);
   glFinish();
   logger.endEventAndPrint("Ncc ", true);
-
+  cv::Mat culo;
+  CaptureViewPortFloat(culo,GL_RGB, 3);
+/*
   //*******************GRAD NCC***********************************
   if(!useSSD){
     logger.startEvent();
@@ -153,6 +171,7 @@ const std::vector<glm::vec3>& PhotometricGradient::twoImageGradient(const cv::Ma
   static_cast<GradientFlowProgram *>(gradFlowProgram_)->setMvp1Orig(mvp1Orig);
   static_cast<GradientFlowProgram *>(gradFlowProgram_)->setMvp2(mvp2);
   static_cast<GradientFlowProgram *>(gradFlowProgram_)->setMvp2Orig(mvp2Orig);
+  static_cast<GradientFlowProgram *>(gradFlowProgram_)->setHasW(hasWeights);
   if(!useSSD){
     static_cast<GradientFlowProgram *>(gradFlowProgram_)->setSimGradTex(simGradTex_);
   }else{
@@ -173,6 +192,8 @@ const std::vector<glm::vec3>& PhotometricGradient::twoImageGradient(const cv::Ma
   static_cast<GradientCollectorProgram *>(gradCollProgram_)->resetTransformFeedback(numActiveVertices_);
   static_cast<GradientCollectorProgram *>(gradCollProgram_)->setMvp1(mvp1);
   static_cast<GradientCollectorProgram *>(gradCollProgram_)->setMvp2(mvp2);
+  static_cast<GradientCollectorProgram *>(gradCollProgram_)->setCamCenter1(cam1.center);
+  static_cast<GradientCollectorProgram *>(gradCollProgram_)->setCamCenter2(cam2.center);
   static_cast<GradientCollectorProgram *>(gradCollProgram_)->setFeedbackLength(numActiveVertices_);
   static_cast<GradientCollectorProgram *>(gradCollProgram_)->setDepthTexture(depthTexture_);
   static_cast<GradientCollectorProgram *>(gradCollProgram_)->setDepthTexture2(depthTexture2_);
@@ -183,7 +204,7 @@ const std::vector<glm::vec3>& PhotometricGradient::twoImageGradient(const cv::Ma
   //*/
   SwapBuffers();
 //  if(useSSD)
-//  sleep(10.0);
+  sleep(2.0);
   //cv::imshow("mopinp",image1);cv::waitKey();
 
   logger.endEventAndPrint("\nTotal twoimages", true);

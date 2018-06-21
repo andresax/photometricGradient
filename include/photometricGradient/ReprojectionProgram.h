@@ -4,53 +4,55 @@
 #include <ShaderProgram.h>
 #include <glm.hpp>
 
-namespace photometricGradient{
+namespace photometricGradient {
 class ReprojectionProgram : public ShaderProgram {
 public:
   ReprojectionProgram(int imageWidth, int imageHeight);
-  virtual ~ReprojectionProgram();
+  virtual ~ReprojectionProgram() = default;
   void initTex();
-    void populateTex(const cv::Mat &image);
+  void populateTex(const cv::Mat &image);
 
-    void initializeFramebufAndTex(GLuint &imageReprojTex);
+  void initializeFramebufAndTex(GLuint &imageReprojTex);
 
-    void compute(bool renderFrameBuf = false);
+  void compute(bool renderFrameBuf = false);
 
-    void setDepthTexture(GLuint depthTexture, GLuint depthTexture2) {
-      depthTexture_ = depthTexture;
-      depthTexture2_ = depthTexture2;
-    }
+  void setDepthTexture(GLuint depthTexture, GLuint depthTexture2) {
+    depthTexture_ = depthTexture;
+    depthTexture2_ = depthTexture2;
+  }
 
+  void setMvp(const glm::mat4& mvp1, const glm::mat4& mvp2) {
+    mvp1_ = mvp1;
+    mvp2_ = mvp2;
+  }
 
-    void setMvp(const glm::mat4& mvp1, const glm::mat4& mvp2) {
-      mvp1_ = mvp1;
-      mvp2_ = mvp2;
-    }
-
-    void setCamCenter(const glm::vec3& camCenter) {
-      camCenter_ = camCenter;
-    }
+  void setCamCenter1(const glm::vec3& camCenter) {
+    camCenter1_ = camCenter;
+  }
+  void setCamCenter2(const glm::vec3& camCenter) {
+    camCenter2_ = camCenter;
+  }
 
   void setLod(const float lod) {
     lod_ = lod;
   }
-  
-  private:
-    void init();
 
-    void createAttributes();
-    void createUniforms();
+private:
+  void init();
 
-    GLuint framebufferReproj_;
-    GLuint imageReprojTex_;
-    GLuint imageTex_;
+  void createAttributes();
+  void createUniforms();
 
-    GLuint posAttribReprojId_, mvp1IDReproj_, mvp2IDReproj_, image2TexId_, shadowMap1IdReproj_, shadowMap2IdReproj_;
+  GLuint framebufferReproj_;
+  GLuint imageReprojTex_;
+  GLuint imageTex_;
 
-    GLuint depthTexture_, depthTexture2_, camCenterID_,lodId_;
-    glm::vec3 camCenter_;
-    glm::mat4 mvp1_, mvp2_;
-    float lod_;
+  GLuint posAttribReprojId_, mvp1IDReproj_, mvp2IDReproj_, image2TexId_, shadowMap1IdReproj_, shadowMap2IdReproj_;
+
+  GLuint depthTexture_, depthTexture2_, camCenter1ID_,camCenter2ID_, lodId_;
+  glm::vec3 camCenter1_,camCenter2_;
+  glm::mat4 mvp1_, mvp2_;
+  float lod_;
 
 };
 }

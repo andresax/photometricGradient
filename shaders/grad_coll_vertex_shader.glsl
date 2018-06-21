@@ -26,10 +26,12 @@ void main(){
         );
     
     shadowCoordV = biasMatrix * MVPcam1 * vec4(position.xyz, 1.0);
-    shadowCoordV.z -= 0.000500;
+    // shadowCoordV.z -= 0.00000500;
+    // shadowCoordV.z -= 0.0500;
     shadowCoord2V = biasMatrix * MVPcam2 * vec4(position.xyz, 1.0);
     // Used to lower moiré pattern and self-shadowing
-    shadowCoord2V.z -= 0.000500;
+    // shadowCoord2V.z -= 0.00000500;
+    // shadowCoord2V.z -= 0.05000;
     
     projectorTexCoordV = MVPcam1 * vec4(position.xyz, 1.0);
     projectorTexCoordV.y = projectorTexCoordV.y;

@@ -13,7 +13,6 @@ GradientFlowProgram::GradientFlowProgram(int imageWidth, int imageHeight) :
 }
 
 GradientFlowProgram::~GradientFlowProgram() {
-  // TODO Auto-generated destructor stub
 }
 
 void GradientFlowProgram::populateTex(const cv::Mat &image1, const cv::Mat &image2) {
@@ -111,12 +110,18 @@ void GradientFlowProgram::compute(bool renderFrameBuf) {
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   glEnable(GL_DEPTH_TEST);
   glDepthFunc(GL_LESS);
+//  glEnable(GL_POLYGON_OFFSET_FILL);
+//  glPolygonOffset(0.4,1.0);
 
   shaderManager_.enable();
 
   glUniform3fv(cam1PositionId_, 1, &t_[0]);
   glUniform3fv(cam2PositionId_, 1, &t2_[0]);
   glUniform1f(lodId_, lod_);
+  if (hasW)
+    glUniform1f(haswid_, 1.0);
+  else
+    glUniform1f(haswid_, -1.0);
   //std::cout<<""<<t.x<<" , "<<t.y<<",  "<<t.z<<""<<std::endl;
   glUniformMatrix4fv(mvp1ID_, 1, GL_FALSE, &mvp1_[0][0]);
   glUniformMatrix4fv(mvp2ID_, 1, GL_FALSE, &mvp2_[0][0]);
@@ -193,5 +198,6 @@ void GradientFlowProgram::createUniforms() {
   gradimage2xId_ = shaderManager_.getUniformLocation("gradimage2x");
   gradSimilarityImgId_ = shaderManager_.getUniformLocation("gradSimilarityImg");
   lod_ = shaderManager_.getUniformLocation("LOD");
+  haswid_ = shaderManager_.getUniformLocation("hasW");
 }
 }

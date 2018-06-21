@@ -11,6 +11,19 @@ NccGradientProgram::NccGradientProgram(int imageWidth, int imageHeight) :
     ShaderProgram(imageWidth, imageHeight) {
 
   lod_ = 0.0;
+  framebuffer_ = -1;
+  /*uniforms id*/
+  image2ReprojTexId_ = imageTexId_ = wId_ = simGradTex_ = image1simGradTex_ = -1;
+  /*tex id*/
+  nccTexId_ = image2ReprojTex_ = imageTex_ = varTexId_ = meanTexId_ = reliabTexId_ = -1;
+  /*attributes id*/
+  posId_ = texCoordId_ = lodId_ = -1;
+
+  //uniforms ID shaderSimilarityGrad_ shader
+  sim_mean_id_ = sim_var_id_ = sim_ncc_id_ = sim_rel_id_ = sim_img1_id_ = sim_img2_id_ = -1;
+  //attribute ID simGrad shader
+  posAttribsimGradId_ = texcoordAttribsimGradId_ = imWsimid_ = imHsimid_ = -1;
+  window_ = -1;
 }
 
 NccGradientProgram::~NccGradientProgram() {
@@ -94,6 +107,10 @@ void NccGradientProgram::compute(bool renderFrameBuf) {
   glBindTexture(GL_TEXTURE_2D, reliabTexId_);
   glUniform1i(sim_rel_id_, 5);
 
+  glActiveTexture(GL_TEXTURE11);
+  glBindTexture(GL_TEXTURE_2D, depthTexture_);
+  glUniform1i(shadowMapId_, 11);
+
   glEnableVertexAttribArray(posAttribsimGradId_);
   glEnableVertexAttribArray(texcoordAttribsimGradId_);
 
@@ -134,5 +151,6 @@ void NccGradientProgram::createUniforms() {
   imHsimid_ = shaderManager_.getUniformLocation("imH");
   wId_ = shaderManager_.getUniformLocation("window");
   lodId_ = shaderManager_.getUniformLocation("LOD");
+  shadowMapId_ = shaderManager_.getUniformLocation("shadowMap");
 }
 }

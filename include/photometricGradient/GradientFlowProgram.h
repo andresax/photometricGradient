@@ -5,7 +5,7 @@
 
 #include <glm.hpp>
 
-namespace photometricGradient{
+namespace photometricGradient {
 class GradientFlowProgram : public ShaderProgram {
 public:
   GradientFlowProgram(int imageWidth, int imageHeight);
@@ -59,6 +59,10 @@ public:
     simGradTex_ = simGradTex;
   }
 
+  void setHasW(bool hasW) {
+    this->hasW = hasW;
+  }
+
 private:
 
   void init();
@@ -68,14 +72,16 @@ private:
 
   GLuint framebuffer_;
   GLuint gradSimilarityImgId_, image1Id_, shadowMapId_, shadowMapId2_, gradimage2yId_, gradimage2xId_, pointToCamID_;
-  GLuint idFacetId_, gradientContributionId_, mvp1ID_, mvp2ID_, mvp1OrigID_, mvp2OrigID_, cam1PositionId_, cam2PositionId_, mvpCameraMoving_,gradTex_;
+  GLuint idFacetId_, gradientContributionId_, mvp1ID_, mvp2ID_, mvp1OrigID_, mvp2OrigID_, cam1PositionId_, cam2PositionId_, mvpCameraMoving_, gradTex_;
 
-  GLuint imageTex_, textureObjX_, textureObjY_, depthTexture_, depthTexture2_,simGradTex_;
-  GLint posAttribId_,lodId_;
+  GLuint imageTex_, textureObjX_, textureObjY_, depthTexture_, depthTexture2_, simGradTex_;
+  GLint posAttribId_, lodId_;
   GLfloat lod_;
 
   glm::vec3 t_, t2_;
   glm::mat4 mvp1_, mvp2_, mvp1Orig_, mvp2Orig_, cam1toPoint;
+  bool hasW;
+  GLuint hasw_,haswid_;
 };
 }
 #endif /* SHADER_MANAGERS_GRADIENTFLOWPROGRAM_H_ */

@@ -22,6 +22,7 @@ uniform sampler2D img2;
 uniform sampler2D reliability; 
 uniform float window;
 uniform float LOD;
+uniform sampler2D shadowMap;
 
 void main(){
 
@@ -30,7 +31,8 @@ void main(){
 
   vec4 means, vars, nccs;
   float W = window;
-  float sigma = 3.0;
+  float sigma = (window/2);//*(LOD+1);
+  //sigma = 2.0;
   float sumWeight=0.0;
   float a = 0.0, b = 0.0, c = 0.0;
 
@@ -43,6 +45,7 @@ void main(){
       if(tex2Coord.x + curCol>0 && tex2Coord.x + curCol<imW){
         float gaussianWeight = (1/(sigma * 2*M_PI)) * exp (-(curCol*curCol + curRow * curRow)/(2*sigma*sigma));
         float curWeight = gaussianWeight;
+        // curWeight = 1.0;
 
         means = texture(mean, tex2Coord + vec2(curCol, curRow));
         vars = texture(var, tex2Coord + vec2(curCol, curRow));
@@ -62,7 +65,8 @@ void main(){
 
   vec4 rel = texture(reliability, tex2Coord );
   d2mcc = rel.x * (aTot * I1.x + bTot * I2.x + cTot);
-  d2mcc = (aTot * I1.x + bTot * I2.x + cTot);
+  
+   //d2mcc = (aTot * I1.x + bTot * I2.x + cTot);
 
 
       // d2mcc = texture(mean, tex2Coord).x/255.0;

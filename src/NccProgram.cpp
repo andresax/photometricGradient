@@ -19,7 +19,7 @@ NccProgram::NccProgram(int imageWidth, int imageHeight) :
   varTexId_ = -1;
   meanTexId_ = -1;
   reliabTexId_ = -1;
-
+  lodId_ = lod_ = -1;
 }
 
 NccProgram::~NccProgram() {
@@ -107,6 +107,15 @@ void NccProgram::compute(bool renderFrameBuf) {
   glBindTexture(GL_TEXTURE_2D, image2ReprojTex_);
   glUniform1i(image2ReprojTexId_, 1);
 
+  glActiveTexture(GL_TEXTURE2);
+  glBindTexture(GL_TEXTURE_2D, depthXYZ_);
+  glUniform1i(depthXYZId_, 2);
+
+
+  glActiveTexture(GL_TEXTURE11);
+  glBindTexture(GL_TEXTURE_2D, depthTexture_);
+  glUniform1i(shadowMapId_, 11);
+
   glEnableVertexAttribArray(posId_);
   glEnableVertexAttribArray(texCoordId_);
 
@@ -137,10 +146,12 @@ void NccProgram::createAttributes() {
 void NccProgram::createUniforms() {
   imageTexId_ = shaderManager_.getUniformLocation("image1");
   image2ReprojTexId_ = shaderManager_.getUniformLocation("image2Repr");
+  depthXYZId_ = shaderManager_.getUniformLocation("depthXYZ");
   imWid_ = shaderManager_.getUniformLocation("imW");
   imHid_ = shaderManager_.getUniformLocation("imH");
   wId_ = shaderManager_.getUniformLocation("window");
   lodId_ = shaderManager_.getUniformLocation("LOD");
+  shadowMapId_ = shaderManager_.getUniformLocation("shadowMap");
 }
 }
 

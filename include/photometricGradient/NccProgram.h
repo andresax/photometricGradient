@@ -29,17 +29,26 @@ public:
     lod_ = lod;
   }
 
+  void setDepthTexture(GLuint depthTexture) {
+    depthTexture_ = depthTexture;
+  }
+
+  void setDepthXYZ(GLuint depthXYZ) {
+    depthXYZ_ = depthXYZ;
+  }
+
+
 private:
   void init();
 
   void createAttributes();
   void createUniforms();
 
-  GLuint framebuffer_;
+  GLuint framebuffer_, depthTexture_,shadowMapId_;
   /*uniforms id*/
-  GLuint imWid_, imHid_, image2ReprojTexId_, imageTexId_, wId_,lodId_;
+  GLuint imWid_, imHid_, image2ReprojTexId_, depthXYZId_, imageTexId_, wId_,lodId_;
   /*tex id*/
-  GLuint nccTexId_, image2ReprojTex_, imageTex_, varTexId_, meanTexId_, reliabTexId_;
+  GLuint nccTexId_, image2ReprojTex_,depthXYZ_, imageTex_, varTexId_, meanTexId_, reliabTexId_;
   /*attributes id*/
   GLuint posId_, texCoordId_;
 

@@ -11,13 +11,8 @@ ReprojectionProgram::ReprojectionProgram(int imageWidth, int imageHeight) :
     ShaderProgram(imageWidth, imageHeight) {
   framebufferReproj_ = imageReprojTex_ = imageTex_ = -1;
   posAttribReprojId_ = mvp1IDReproj_ = mvp2IDReproj_ = image2TexId_ = shadowMap1IdReproj_ = shadowMap2IdReproj_ = -1;
-  depthTexture_ = depthTexture2_ = -1;
-  camCenterID_ = -1;
+  depthTexture_ = depthTexture2_ = camCenter1ID_ = camCenter2ID_ =  lodId_ = -1;
   lod_ = 0;
-  lodId_ = -1;
-}
-
-ReprojectionProgram::~ReprojectionProgram() {
 }
 
 void ReprojectionProgram::initTex() {
@@ -56,6 +51,10 @@ void ReprojectionProgram::compute(bool renderFrameBuf) {
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   glEnable(GL_DEPTH_TEST);
   glDepthFunc(GL_LESS);
+//  glEnable(GL_CULL_FACE);
+//  glCullFace(GL_BACK);
+//  glEnable(GL_POLYGON_OFFSET_FILL);
+//  glPolygonOffset(0.4,1.0);
 
   shaderManager_.enable();
 
@@ -69,7 +68,8 @@ void ReprojectionProgram::compute(bool renderFrameBuf) {
   glActiveTexture(GL_TEXTURE1);
   glBindTexture(GL_TEXTURE_2D, depthTexture2_);
   glUniform1i(shadowMap2IdReproj_, 1);
-  glUniform3fv(camCenterID_, 1, &camCenter_[0]);
+  glUniform3fv(camCenter1ID_, 1, &camCenter1_[0]);
+  glUniform3fv(camCenter2ID_, 1, &camCenter2_[0]);
 
   glActiveTexture(GL_TEXTURE2);
   glBindTexture(GL_TEXTURE_2D, imageTex_);
@@ -89,6 +89,9 @@ void ReprojectionProgram::compute(bool renderFrameBuf) {
 
   glDisableVertexAttribArray(posAttribReprojId_);
   glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+  glDisable(GL_CULL_FACE);
+
 }
 
 void ReprojectionProgram::initializeFramebufAndTex(GLuint &imageReprojTex) {
@@ -101,12 +104,13 @@ void ReprojectionProgram::initializeFramebufAndTex(GLuint &imageReprojTex) {
   glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, tmpdeptht, 0);
   checkFrameBuffer("ReprojectionShaderProgram::initializeFramebufAndTex");
   imageReprojTex_ = imageReprojTex;
+
 }
 
 void ReprojectionProgram::init() {
-
   shaderManager_.init();
   shaderManager_.addShader(GL_VERTEX_SHADER, std::string(BASE_PATH_SHADERS) + "shaders/reprojection_vertex_shader.glsl");
+  shaderManager_.addShader(GL_GEOMETRY_SHADER, std::string(BASE_PATH_SHADERS) + "shaders/reprojection_geometry_shader.glsl");
   shaderManager_.addShader(GL_FRAGMENT_SHADER, std::string(BASE_PATH_SHADERS) + "shaders/reprojection_fragment_shader.glsl");
   shaderManager_.finalize();
 }
@@ -119,7 +123,8 @@ void ReprojectionProgram::createUniforms() {
   mvp1IDReproj_ = shaderManager_.getUniformLocation("MVP1");
   mvp2IDReproj_ = shaderManager_.getUniformLocation("MVP2");
   image2TexId_ = shaderManager_.getUniformLocation("image2");
-  camCenterID_ = shaderManager_.getUniformLocation("camCenter");
+  camCenter1ID_ = shaderManager_.getUniformLocation("c1");
+  camCenter2ID_ = shaderManager_.getUniformLocation("c2");
   lodId_ = shaderManager_.getUniformLocation("LOD");
 
   shadowMap1IdReproj_ = shaderManager_.getUniformLocation("shadowMap1");

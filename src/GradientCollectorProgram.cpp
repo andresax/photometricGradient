@@ -9,6 +9,7 @@ namespace photometricGradient{
 GradientCollectorProgram::GradientCollectorProgram(int imageWidth, int imageHeight) :
     ShaderProgram(imageWidth, imageHeight) {
       lod_=0.0;
+      camCenter1ID_ = camCenter2ID_ = -1;
 }
 
 GradientCollectorProgram::~GradientCollectorProgram() {
@@ -25,6 +26,8 @@ void GradientCollectorProgram::compute(bool show) {
   glEnable(GL_DEPTH_TEST);
   glDepthFunc(GL_LESS);
 
+//  glEnable(GL_POLYGON_OFFSET_FILL);
+//  glPolygonOffset(0.4,1.0);
   shaderManager_.enable();
 
   glActiveTexture(GL_TEXTURE5);
@@ -44,6 +47,8 @@ void GradientCollectorProgram::compute(bool show) {
   glActiveTexture(GL_TEXTURE8);
   glBindTexture(GL_TEXTURE_2D, depthTexture2_);
   glUniform1i(shadowMapId2Coll_, 8);
+  glUniform3fv(camCenter1ID_, 1, &camCenter1_[0]);
+  glUniform3fv(camCenter2ID_, 1, &camCenter2_[0]);
 
   glEnableVertexAttribArray(posAttribCollId_);
   glBindBuffer(GL_ARRAY_BUFFER, arrayBufferObj_);
@@ -129,6 +134,8 @@ void GradientCollectorProgram::createUniforms() {
   shadowMapId2Coll_ = shaderManager_.getUniformLocation("shadowMap2");
   imWCollectorid_ = shaderManager_.getUniformLocation("imW");
   imHCollectorid_ = shaderManager_.getUniformLocation("imH");
+  camCenter1ID_ = shaderManager_.getUniformLocation("c1");
+  camCenter2ID_ = shaderManager_.getUniformLocation("c2");
   lodId_ = shaderManager_.getUniformLocation("LOD");
 }
 }

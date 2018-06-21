@@ -6,7 +6,7 @@ in vec2 tex2Coord;   /*2D coordinate in camera 1*/
 in vec2 tex1Coord;   /*2D coordinate in camera 1*/
 in vec4 shadowCoord1;
 
-/*output texture 0.0...255.0*/
+/*output texture 0.0f...255.0f*/
 layout(location = 0) out float ncc;
 layout(location = 1) out vec3 var;
 layout(location = 2) out vec2 mean;
@@ -20,46 +20,120 @@ uniform  float LOD;
 uniform  float modeSSD;
 uniform sampler2D image1;
 uniform sampler2D image2Repr;
+uniform sampler2D depthXYZ;
+uniform sampler2D shadowMap;
 
 void main(){
 
   vec4 img1;
   vec4 image2Reproj;
   float W = window;
-  float sumWeight=0.0;
-  float beta2 = 10.0;
-  float eps = 5.0;
-  float sum1 = 0.0, sum2 = 0.0, sqsum1 = 0.0, sqsum2 = 0.0, prod12 = 0.0, diff12 = 0.0;
-  
-  float offset = 0.995;
-  float step = (LOD+1);
+  float sumWeight = 0.0f;
+  float beta2     = 5.0f;
+  float eps       = 5.0f;
+  float sum1= 0.0f, sum2 = 0.0f, sqsum1 = 0.0f, sqsum2 = 0.0f, prod12 = 0.0f, diff12 = 0.0f;
+  float offset = 0.995f;
+  float step = LOD + 1.0f;
+ //step = (1);
   float curRow, curCol;
-  float sigma = 2.0;
+  float sigma = (window / 2.0f);//*(LOD+1);
+  float minDiff = -1.0f;
+  float maxDiff = -1.0f;
 
-  //step = (1);
+  float curN    =  0.0f;
+  float tot     =  0.0f;
+  float avgDiff =  0.0f;
+  vec4 currentDepth;
+
+  vec4 centerDepthValue = texture(shadowMap, tex1Coord);//check why not with LOD
+  for(curRow = -(step)*W/imH; curRow <= (step)*W/imH; curRow += (step)/imH){
+    curCol = -(step)*W/imW;
+    currentDepth = texture(shadowMap, tex1Coord + vec2(curCol, curRow));//check why not with LOD
+    if(minDiff< 0.0f || minDiff > abs(currentDepth.x-centerDepthValue.x)){
+      minDiff = abs(currentDepth.x-centerDepthValue.x);
+    }
+    if(maxDiff< 0.0f || maxDiff < abs(currentDepth.x-centerDepthValue.x)){
+      maxDiff = abs(currentDepth.x-centerDepthValue.x);
+    }
+
+    curCol = (step)*W/imW;
+    currentDepth = texture(shadowMap, tex1Coord + vec2(curCol, curRow));//check why not with LOD
+    if(minDiff< 0.0f || minDiff > abs(currentDepth.x-centerDepthValue.x)){
+      minDiff = abs(currentDepth.x-centerDepthValue.x);
+    }
+    if(maxDiff< 0.0f || maxDiff < abs(currentDepth.x-centerDepthValue.x)){
+      maxDiff = abs(currentDepth.x-centerDepthValue.x);
+    }
+  } 
+
+
+  for(curCol = -(step)*W/imW; curCol <= (step)*W/imW; curCol += (step)/imW){
+      curRow = -(step)*W/imH;
+      currentDepth = texture(shadowMap, tex1Coord + vec2(curCol, curRow));//check why not with LOD
+      if(minDiff< 0.0f || minDiff > abs(currentDepth.x-centerDepthValue.x)){
+        minDiff = abs(currentDepth.x-centerDepthValue.x);
+      }
+      if(maxDiff< 0.0f || maxDiff < abs(currentDepth.x-centerDepthValue.x)){
+        maxDiff = abs(currentDepth.x-centerDepthValue.x);
+      }
+
+      curRow = (step)*W/imH;
+      currentDepth = texture(shadowMap, tex1Coord + vec2(curCol, curRow));//check why not with LOD
+      if(minDiff< 0.0f || minDiff > abs(currentDepth.x-centerDepthValue.x)){
+        minDiff = abs(currentDepth.x-centerDepthValue.x);
+      }
+      if(maxDiff< 0.0f || maxDiff < abs(currentDepth.x-centerDepthValue.x)){
+        maxDiff = abs(currentDepth.x-centerDepthValue.x);
+      }
+  }  
+
+float diff;
+
+  for(curRow = -(step)*W/imH; curRow <= (step)*W/imH; curRow += (step)/imH){
+
+    for(curCol = -(step)*W/imW; curCol <= (step)*W/imW; curCol += (step)/imW){
+
+      currentDepth = texture(shadowMap, tex1Coord + vec2(curCol, curRow));//check why not with LOD
+       diff= abs(currentDepth.x-centerDepthValue.x);
+      if(abs(diff - maxDiff)*5.0f > abs(diff - minDiff)) {//diff is closer to minDiff
+        avgDiff = avgDiff + diff;
+      }
+      tot = tot + 1.0f;
+    }
+  }
+  avgDiff = avgDiff / curN;
+ 
 
   float curC, curR, gaussianWeight, curWeight;
   for(curRow = -(step)*W/imH; curRow <= (step)*W/imH; curRow += (step)/imH){
 
-    if(tex1Coord.x + curRow > (1.0 - offset) && tex1Coord.x + curRow < offset){
+    if(tex1Coord.x + curRow > (1.0f - offset) && tex1Coord.x + curRow < offset){
       for(curCol = -(step)*W/imW; curCol <= (step)*W/imW; curCol += (step)/imW){
-        if(tex1Coord.y + curCol > (1.0 - offset) && tex1Coord.y + curCol < offset){
-          curC = curCol * imW;
-          curR = curRow *imH;
-          gaussianWeight = (1/(sigma * 2 * M_PI)) * exp (-(curC * curC + curR * curR)/(2 * sigma * sigma));
-          curWeight = gaussianWeight;
-          //img1 = 255.0*texture(image1, tex1Coord + vec2(curCol, curRow));
-          image2Reproj = 255.0*texture(image2Repr, tex2Coord + vec2(curCol, curRow));
-          img1 = 255.0*textureLod(image1, tex1Coord + vec2(curCol, curRow),LOD);
-          //image2Reproj = 255.0*textureLod(image2Repr, tex2Coord + vec2(curCol, curRow),3);
-          sum1 += curWeight * img1.x;
-          sum2 += curWeight * image2Reproj.x;
-          sqsum1 += curWeight * img1.x * img1.x;
-          sqsum2 += curWeight * image2Reproj.x * image2Reproj.x;
-          prod12 += curWeight * img1.x * image2Reproj.x;
-          diff12 += curWeight * img1.x - image2Reproj.x;
-          sumWeight += curWeight;
-        }
+        if(tex1Coord.y + curCol > (1.0f - offset) && tex1Coord.y + curCol < offset){
+          currentDepth = texture(shadowMap, tex1Coord + vec2(curCol, curRow));//check why not with LOD
+           if( abs(currentDepth.x-centerDepthValue.x) < 1.0f * avgDiff){
+              curN = curN + 1.0f ;
+            curC = curCol * imW;
+            curR = curRow *imH;
+            gaussianWeight = (1/(sigma * 2 * M_PI)) * exp (-(curC * curC + curR * curR)/(2 * sigma * sigma));
+            curWeight = gaussianWeight;
+            //img1 = 255.0f*texture(image1, tex1Coord + vec2(curCol, curRow));
+            image2Reproj = 255.0f*texture(image2Repr, tex2Coord + vec2(curCol, curRow));//check why not with LOD
+            img1 = 255.0f*textureLod(image1, tex1Coord + vec2(curCol, curRow),LOD);
+            if((img1.x > 0.000000000001f ||img1.x < -0.000000000001f)&& image2Reproj.x > 0.000000000001f){
+              //image2Reproj = 255.0f*textureLod(image2Repr, tex2Coord + vec2(curCol, curRow),3);
+              sum1   += curWeight * img1.x;
+              sum2   += curWeight * image2Reproj.x;
+              sqsum1 += curWeight * img1.x * img1.x;
+              sqsum2 += curWeight * image2Reproj.x * image2Reproj.x;
+              prod12 += curWeight * img1.x * image2Reproj.x;
+              diff12 += curWeight * img1.x - image2Reproj.x;
+              sumWeight += curWeight;
+
+              //curN = curN + 1.0f ;
+            }
+          }
+         }
       }
     }
   }
@@ -69,13 +143,14 @@ void main(){
   float var2 = sqsum2/sumWeight - mean2*mean2 + beta2;
   float var12 = prod12/sumWeight - mean1*mean2;
 
-  ncc = var12/(sqrt(var1 * var2));
-  
+  ncc  = var12/(sqrt(var1 * var2));
+  ncc  =float(curN)/float(tot);
+         ncc = 0.5*(texture(shadowMap, tex1Coord ).x);//check why not with LOD
   mean = vec2(mean1, mean2);
-  var = vec3(var1, var2, var12);
+  var  = vec3(var1, var2, var12);
 
-  reliability = min(var1,var2)/(min(var1, var2) + eps);
-  reliability = var1/(var1 + eps)*(1-modeSSD) ;//use reliability texture to save ssd if needed
-  reliability = diff12/sumWeight;//use reliability texture to save ssd if needed
+  reliability = min(var1,var2)/(min(var1, var2) + eps*eps);
+  // reliability = var1/(var1 + eps)*(1-modeSSD) ;//use reliability texture to save ssd if needed
+  // reliability = diff12/sumWeight;//use reliability texture to save ssd if needed
 
 }

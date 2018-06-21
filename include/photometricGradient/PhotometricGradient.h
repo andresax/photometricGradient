@@ -32,10 +32,14 @@ public:
     window_NCC_ = windowNcc;
   }
 
+  void setHasWeights(bool hasWeights) {
+    this->hasWeights = hasWeights;
+  }
 private:
 
 
   ShaderProgram *depthMapProgram_;
+  ShaderProgram *depthMapXYZProgram_;
   ShaderProgram *reprojectionProgram_;
   ShaderProgram *nccProgram_;
   ShaderProgram *nccGradProgram_;
@@ -45,14 +49,15 @@ private:
 
 
   GLuint vertexBufferObj_;
-  GLuint framebufferDepth_, framebufferDepth2_;
+  GLuint framebufferDepth_, framebufferDepth2_, framebufferDepthXYZ_;
 
-  GLuint depthTexture_, depthTexture2_,image2ReprojTex_;
+  GLuint depthTexture_, depthTexture2_,image2ReprojTex_,depthTextureXYZ_;
   GLuint NCCTex_, meanTex_, varTex_, reliabilityTex_;
   GLuint simGradTex_,gradientValuesTexture_;
 
   int numActiveVertices_;
   int window_NCC_;
+  bool hasWeights;
 
 };
 }

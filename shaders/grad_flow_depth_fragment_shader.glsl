@@ -23,6 +23,7 @@ uniform mat4 MVPcam2;
 uniform mat4 pointTocamMat2;
 uniform mat4 MVPcam2Orig;
 uniform float LOD;
+uniform float hasW;
 
 void main(){
 
@@ -32,8 +33,18 @@ void main(){
   vec3 gradientPixel;
   vec3 camPointVector, camPointVector2;
 
-  float shadowCoeff = textureProj(shadowMap, shadowCoord);
-  float shadowCoeff2 = textureProj(shadowMap2, shadowCoord2);
+
+  float bias1 = clamp(0.9*tan(acos(dot(normalFacet, positionPoint.xyz-camPosition))),0.0f,0.9);
+  float bias2 = clamp(0.9*tan(acos(dot(normalFacet, positionPoint.xyz-cam2Position))),0.0f,0.9);
+  //float bias2 = max(0.5 * (1.0 - dot(normalFacet, c2-positionP)), 0.05);
+  vec4 shadowCoord1Biased = shadowCoord;
+  vec4 shadowCoord2Biased = shadowCoord2;
+  shadowCoord1Biased.z -= bias1;
+  shadowCoord2Biased.z -= bias2;
+
+
+  float shadowCoeff = textureProj(shadowMap, shadowCoord1Biased);
+  float shadowCoeff2 = textureProj(shadowMap2, shadowCoord2Biased);
 
   vec4 positionPointToCam1= positionPoint;
   vec4 positionToCam = pointTocamMat2 * positionPoint;
@@ -72,7 +83,7 @@ void main(){
   float zi = length(di);
 
   float denomGrad = camPointVector.x*normalFacet.x + camPointVector.y*normalFacet.y + camPointVector.z*normalFacet.z;
-  float zeroapprox = 0.00000000001;
+  float zeroapprox = 0.000000000000001;
 
   gradientContribution =  shadowCoeff * shadowCoeff2 *vec4(1.0,0.0,0.0,1.0);
   if(denomGrad> zeroapprox || denomGrad < -zeroapprox ){
@@ -110,31 +121,21 @@ void main(){
     }
     float diffAngle = ang1N + sign*ang2N;
     
-    float mean = 70*M_PI/180;
-    float stddev = M_PI/3;
-    float stddev2 = M_PI/4;
+    float mean = 50*M_PI/180;
+    float stddev = M_PI/6;
+    float stddev2 = M_PI/8;
     float coeffBaseline = exp(-((mean-ang12)*(mean-ang12))/(2*stddev*stddev));
     float coeffNormal = exp(-((0-diffAngle)*(0-diffAngle))/(2*stddev2*stddev2));
-    float coeff = 0.25 * min(1,1.1*coeffBaseline ) + 0.75*min(1,1.1*coeffNormal );
+    float coeff = 0.25 * min(1,coeffBaseline ) + 0.75*min(1,coeffNormal );
 
+    if(hasW>0){
+      gradientContribution = (3.14/1.0339)*coeff*shadowCoeff * shadowCoeff2 * f12/denomGrad * vec4(-normalFacet, 1.0);
+      gradientContribution =  shadowCoeff * shadowCoeff2 * f12/denomGrad * vec4(-normalFacet, 1.0);
+    }else{
+      gradientContribution =  shadowCoeff * shadowCoeff2 * f12/denomGrad * vec4(-normalFacet, 1.0);
+      //gradientContribution = 0.6431  * shadowCoeff * shadowCoeff2 * f12/denomGrad * vec4(-normalFacet, 1.0);
+    }
 
-    gradientContribution = (3.14/1.0339)*coeff*shadowCoeff * shadowCoeff2 * f12/denomGrad * vec4(-normalFacet, 1.0);
-    //gradientContribution = (3.14/1.0339)*coeff*shadowCoeff * shadowCoeff2 * f12/denomGrad * vec4(-normalFacet, 1.0);
-    //gradientContribution = shadowCoeff * shadowCoeff2 * gradx.x * vec4(-normalFacet, 1.0);
-    gradientContribution = shadowCoeff * shadowCoeff2 * f12/denomGrad * vec4(-normalFacet, 1.0);
-
-
-
-    /*vec3 l = normalize(positionPoint.xyz);
-    vec3 n = normalize(normalFacet);
-
-    float cosTheta = abs(dot(n, l));
-    float cosTheta2 = abs(dot(-n, l));
-    //illumination ambient + diffuse + specular
-    vec3 ambient = vec3(0.05);
-    //vec3 diffuse = vec3(imageReproj.x, imageReproj.y, imageReproj.z)* max(cosTheta, cosTheta2);
-    vec3 diffuse = vec3(1.0, 1.0, 1.0)* max(cosTheta, cosTheta2);
-    gradientContribution = coeff*shadowCoeff * shadowCoeff2 * vec4(diffuse, 1.0);*/
   }else{
     gradientContribution =  shadowCoeff * shadowCoeff2 *vec4(0.0,0.0,0.0,1.0);
   }

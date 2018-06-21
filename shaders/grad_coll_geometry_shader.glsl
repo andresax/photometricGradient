@@ -27,6 +27,8 @@ uniform sampler2D gradMap;
 uniform sampler2DShadow shadowMap;
 uniform sampler2DShadow shadowMap2;
 uniform float LOD;
+uniform vec3 c1;
+uniform vec3 c2;
 
 vec3 normalizeH(vec3 pt){
   float norma = 1.0;
@@ -191,20 +193,28 @@ void main(){
   vec3 normal = normalize(cross((positionPointV[2]).xyz - (positionPointV[0]).xyz, (positionPointV[1]).xyz - (positionPointV[0]).xyz));
 
   for(int i = 0; i < gl_in.length(); i++){
-     float shadowCoeff = textureProj(shadowMap, shadowCoordV[i]);
-     float shadowCoeff2 = textureProj(shadowMap2, shadowCoord2V[i]);
      gl_Position = gl_in[i].gl_Position;
-     shadowCoord = shadowCoordV[i];
-     shadowCoord2 = shadowCoord2V[i];
      projectorTexCoord = projectorTexCoordV[i];
      projectorTexCoordFlip = projectorTexCoordVFlip[i];
      projector2TexCoord = projector2TexCoordV[i];
      positionPoint = positionPointV[i];
 
+    float bias1 = clamp(0.9*tan(acos(dot(normal, positionPoint.xyz-c1))),0.0f,0.9);
+    float bias2 = clamp(0.9*tan(acos(dot(normal, positionPoint.xyz-c2))),0.0f,0.9);
+    //float bias2 = max(0.5 * (1.0 - dot(normalFacet, c2-positionP)), 0.05);
+    vec4 shadowCoord1Biased = shadowCoordV[i];
+    vec4 shadowCoord2Biased = shadowCoord2V[i];
+    shadowCoord1Biased.z -= bias1;
+    shadowCoord2Biased.z -= bias2;
+    float shadowCoeff = textureProj(shadowMap, shadowCoord1Biased);
+    float shadowCoeff2 = textureProj(shadowMap2, shadowCoord2Biased);
+
     if (abs(twiceSignedArea)<0.0000000000000001)
       sumGradient = vec3(0.0);
     else{
+
       sumGradient = shadowCoeff * shadowCoeff2 * vec3(sumGradientTot[i].xyz);//abs(twiceSignedArea/2));
+        //    sumGradient = shadowCoeff * shadowCoeff2 * vec3(sumGradientTot[i].xyz)/abs(twiceSignedArea/2);
     }
     EmitVertex();
 

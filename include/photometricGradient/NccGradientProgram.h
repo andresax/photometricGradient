@@ -46,6 +46,9 @@ public:
     varTexId_ = varTexId;
   }
 
+  void setDepthTexture(GLuint depthTexture) {
+    depthTexture_ = depthTexture;
+  }
 private:
 
   void init();
@@ -53,7 +56,7 @@ private:
   void createAttributes();
   void createUniforms();
 
-  GLuint framebuffer_;
+  GLuint framebuffer_, depthTexture_,shadowMapId_;
   /*uniforms id*/
   GLuint image2ReprojTexId_, imageTexId_, wId_, simGradTex_,image1simGradTex_;
   /*tex id*/
