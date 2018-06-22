@@ -37,10 +37,10 @@ void PhotometricGradient::initShaders() {
 
   //************************depthXYZ********************************
   std::cout << "DepthMapProgram init...";
-  depthMapProgram_ = new DepthMapXYZProgram(imageWidth_, imageHeight_);
-  depthMapProgram_->initializeProgram();
-  depthMapProgram_->setUseElementsIndices(false);
-  static_cast<DepthMapXYZProgram *>(depthMapProgram_)->initializeFramebufAndTex(depthTextureXYZ_);
+  depthMapXYZProgram_ = new DepthMapXYZProgram(imageWidth_, imageHeight_);
+  depthMapXYZProgram_->initializeProgram();
+  depthMapXYZProgram_->setUseElementsIndices(false);
+  static_cast<DepthMapXYZProgram *>(depthMapXYZProgram_)->initializeFramebufAndTex( depthTextureXYZ_);
   std::cout << "DONE" << std::endl;
 
   //************************reprojection**************************
@@ -107,12 +107,20 @@ const std::vector<glm::vec3>& PhotometricGradient::twoImageGradient(const cv::Ma
   //******************DEPTH MAP *******************************
   logger.startEvent();
   depthMapProgram_->setArrayBufferObj(vertexBufferObj_, numActiveVertices_);
-
-  static_cast<DepthMapXYZProgram *>(depthMapProgram_)->setMvp(mvp1);
-  static_cast<DepthMapXYZProgram *>(depthMapProgram_)->setCenter(cam1.center);
-  static_cast<DepthMapXYZProgram *>(depthMapProgram_)->compute(true);
+  static_cast<DepthMapProgram *>(depthMapProgram_)->computeDepthMap(framebufferDepth_, mvp1);
+  static_cast<DepthMapProgram *>(depthMapProgram_)->computeDepthMap(framebufferDepth2_, mvp2);
   glFinish();
   logger.endEventAndPrint("Depth ", false);
+
+
+  //******************DEPTH MAP XYZ*******************************
+  logger.startEvent();
+  depthMapXYZProgram_->setArrayBufferObj(vertexBufferObj_, numActiveVertices_);
+  static_cast<DepthMapXYZProgram *>(depthMapXYZProgram_)->setMvp(mvp1);
+  static_cast<DepthMapXYZProgram *>(depthMapXYZProgram_)->setCenter(cam1.center);
+  static_cast<DepthMapXYZProgram *>(depthMapXYZProgram_)->compute(true);
+  glFinish();
+  logger.endEventAndPrint("DepthXYZ ", false);
 
   //**********************REPROJ*******************************
   logger.startEvent();
@@ -133,17 +141,17 @@ const std::vector<glm::vec3>& PhotometricGradient::twoImageGradient(const cv::Ma
   nccProgram_->setArrayBufferObj(vboSimGrad_, 4);
   nccProgram_->setElementsBufferObj(eboSimGrad_, 6);
   static_cast<NccProgram *>(nccProgram_)->setImage2ReprojTex(image2ReprojTex_);
-  static_cast<NccProgram *>(nccProgram_)->setDepthTexture(depthTexture_);;
+  static_cast<NccProgram *>(nccProgram_)->setDepthTexture(depthTexture_);
   static_cast<NccProgram *>(nccProgram_)->setDepthXYZ(depthTextureXYZ_);
   nccProgram_->populateTex(image1);
   static_cast<NccProgram *>(nccProgram_)->setWindow(window_NCC_);
   static_cast<NccProgram *>(nccProgram_)->setLod(levelOfDetail);
-  nccProgram_->compute(false);
+  nccProgram_->compute(true);
   glFinish();
   logger.endEventAndPrint("Ncc ", true);
-  cv::Mat culo;
-  CaptureViewPortFloat(culo,GL_RGB, 3);
-/*
+//  cv::Mat culo;
+//  CaptureViewPortFloat(culo,GL_RGB, 3);
+
   //*******************GRAD NCC***********************************
   if(!useSSD){
     logger.startEvent();
@@ -204,7 +212,7 @@ const std::vector<glm::vec3>& PhotometricGradient::twoImageGradient(const cv::Ma
   //*/
   SwapBuffers();
 //  if(useSSD)
-  sleep(2.0);
+  sleep(20.0);
   //cv::imshow("mopinp",image1);cv::waitKey();
 
   logger.endEventAndPrint("\nTotal twoimages", true);

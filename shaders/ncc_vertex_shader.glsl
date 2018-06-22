@@ -8,6 +8,7 @@ out vec2 tex2Coord;
 out vec2 tex1Coord;
 
 
+uniform sampler2D depthXYZ;
 
 void main(){
  

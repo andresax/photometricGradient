@@ -4,22 +4,24 @@
 #define BASE_PATH_SHADERS  "photometricGradient/"
 #endif
 
-namespace photometricGradient{
+namespace photometricGradient {
 DepthMapXYZProgram::DepthMapXYZProgram(int imageWidth, int imageHeight) :
     ShaderProgram(imageWidth, imageHeight) {
   posAttribDepthId_ = -1;
-  mvpId_  = -1;
+  mvpId_ = -1;
 }
 
 DepthMapXYZProgram::~DepthMapXYZProgram() {
 }
 
-
-void DepthMapXYZProgram::initializeFramebufAndTex( GLuint& depthTextureId) {
+void DepthMapXYZProgram::initializeFramebufAndTex(GLuint& depthTextureId) {
 
   glGenFramebuffers(1, &framebuffer_);
   glBindFramebuffer(GL_FRAMEBUFFER, framebuffer_);
-  initRedTex(depthTextureId);
+  glGenTextures(1, &depthTextureId);
+  glBindTexture(GL_TEXTURE_2D, depthTextureId);
+  glTexImage2D(GL_TEXTURE_2D, 0, GL_R32F, imageWidth_, imageHeight_, 0, GL_RED, GL_FLOAT, nullptr);
+  defaultTextureParameters();
   glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, depthTextureId, 0);
   GLuint tmpdeptht;
   initDepthTex(tmpdeptht);
@@ -27,7 +29,6 @@ void DepthMapXYZProgram::initializeFramebufAndTex( GLuint& depthTextureId) {
   imageReprojTex_ = depthTextureId;
 
   checkFrameBuffer("DepthMapXYZProgram::initializeFramebufAndTex");
-
 
 }
 
@@ -48,7 +49,6 @@ void DepthMapXYZProgram::compute(bool renderFrameBuf) {
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
   glEnable(GL_CULL_FACE);
-//  glEnable(GL_CULL_FACE);
   glCullFace(GL_BACK);
   shaderManager_.enable();
 
@@ -75,8 +75,8 @@ void DepthMapXYZProgram::compute(bool renderFrameBuf) {
 
 void DepthMapXYZProgram::init() {
   shaderManager_.init();
-  shaderManager_.addShader(GL_VERTEX_SHADER, std::string(BASE_PATH_SHADERS)+"shaders/depthXYZ_vertex_shader.glsl");
-  shaderManager_.addShader(GL_FRAGMENT_SHADER, std::string(BASE_PATH_SHADERS)+"shaders/depthXYZ_fragment_shader.glsl");
+  shaderManager_.addShader(GL_VERTEX_SHADER, std::string(BASE_PATH_SHADERS) + "shaders/depthXYZ_vertex_shader.glsl");
+  shaderManager_.addShader(GL_FRAGMENT_SHADER, std::string(BASE_PATH_SHADERS) + "shaders/depthXYZ_fragment_shader.glsl");
   shaderManager_.finalize();
 }
 
