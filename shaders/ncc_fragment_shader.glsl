@@ -38,83 +38,103 @@ void main(){
   float curRow, curCol;
   float sigma = (window / 2.0f);//*(LOD+1);
   float minDiff = -1.0f;
-  float maxDiff = -1.0f;
+  float maxDiff = 0.0f;
 
   float curN    =  0.0f;
   float tot     =  0.0f;
   float avgDiff =  0.0f;
   vec4 currentDepth;
 
-  vec4 centerDepthValue = texture(depthXYZ, tex1Coord);//check why not with LOD
-  for(curRow = -(step)*W/imH; curRow <= (step)*W/imH; curRow += (step)/imH){
-    curCol = -(step)*W/imW;
-    currentDepth = texture(depthXYZ, tex1Coord + vec2(curCol, curRow));//check why not with LOD
-    if(minDiff< 0.0f || minDiff > abs(currentDepth.x-centerDepthValue.x)){
-      minDiff = abs(currentDepth.x-centerDepthValue.x);
-    }
-    if(maxDiff< 0.0f || maxDiff < abs(currentDepth.x-centerDepthValue.x)){
-      maxDiff = abs(currentDepth.x-centerDepthValue.x);
-    }
+  vec4 centerDepthValue = texture(depthXYZ, tex2Coord);
 
-    curCol = (step)*W/imW;
-    currentDepth = texture(depthXYZ, tex1Coord + vec2(curCol, curRow));//check why not with LOD
-    if(minDiff< 0.0f || minDiff > abs(currentDepth.x-centerDepthValue.x)){
-      minDiff = abs(currentDepth.x-centerDepthValue.x);
-    }
-    if(maxDiff< 0.0f || maxDiff < abs(currentDepth.x-centerDepthValue.x)){
-      maxDiff = abs(currentDepth.x-centerDepthValue.x);
-    }
-  } 
+  // for(curRow = -(step)*W/imH; curRow <= (step)*W/imH; curRow += (step)/imH){
+  //   curCol = -(step)*W/imW;
+  //   currentDepth = texture(depthXYZ, tex2Coord + vec2(curCol, curRow));//check why not with LOD
+  //   if(minDiff< 0.0f || minDiff > abs(currentDepth.x-centerDepthValue.x)){
+  //     minDiff = abs(currentDepth.x-centerDepthValue.x);
+  //   }
+  //   if(maxDiff< 0.0f || maxDiff < abs(currentDepth.x-centerDepthValue.x)){
+  //     maxDiff = abs(currentDepth.x-centerDepthValue.x);
+  //   }
+
+  //   curCol = (step)*W/imW;
+  //   currentDepth = texture(depthXYZ, tex2Coord + vec2(curCol, curRow));//check why not with LOD
+  //   if(minDiff< 0.0f || minDiff > abs(currentDepth.x-centerDepthValue.x)){
+  //     minDiff = abs(currentDepth.x-centerDepthValue.x);
+  //   }
+  //   if(maxDiff< 0.0f || maxDiff < abs(currentDepth.x-centerDepthValue.x)){
+  //     maxDiff = abs(currentDepth.x-centerDepthValue.x);
+  //   }
+  // } 
 
 
-  for(curCol = -(step)*W/imW; curCol <= (step)*W/imW; curCol += (step)/imW){
-      curRow = -(step)*W/imH;
-      currentDepth = texture(depthXYZ, tex1Coord + vec2(curCol, curRow));//check why not with LOD
-      if(minDiff< 0.0f || minDiff > abs(currentDepth.x-centerDepthValue.x)){
-        minDiff = abs(currentDepth.x-centerDepthValue.x);
-      }
-      if(maxDiff< 0.0f || maxDiff < abs(currentDepth.x-centerDepthValue.x)){
+  // for(curCol = -(step)*W/imW; curCol <= (step)*W/imW; curCol += (step)/imW){
+  //     curRow = -(step)*W/imH;
+  //     currentDepth = texture(depthXYZ, tex2Coord + vec2(curCol, curRow));//check why not with LOD
+  //     if(minDiff< 0.0f || minDiff > abs(currentDepth.x-centerDepthValue.x)){
+  //       minDiff = abs(currentDepth.x-centerDepthValue.x);
+  //     }
+  //     if(maxDiff< 0.0f || maxDiff < abs(currentDepth.x-centerDepthValue.x)){
+  //       maxDiff = abs(currentDepth.x-centerDepthValue.x);
+  //     }
+
+  //     curRow = (step)*W/imH;
+  //     currentDepth = texture(depthXYZ, tex2Coord + vec2(curCol, curRow));
+  //     if(minDiff< 0.0f || minDiff > abs(currentDepth.x-centerDepthValue.x)){
+  //       minDiff = abs(currentDepth.x-centerDepthValue.x);
+  //     }
+  //     if(maxDiff< 0.0f || maxDiff < abs(currentDepth.x-centerDepthValue.x)){
+  //       maxDiff = abs(currentDepth.x-centerDepthValue.x);
+  //     }
+  // }  
+
+
+  float diff;
+  minDiff = 0.0;
+
+//find max diff w.r.t. center depth
+  for(curRow = -(step)*W/imH; curRow <= (step)*W/imH; curRow += (1.0)/imH){
+    for(curCol = -(step)*W/imW; curCol <= (step)*W/imW; curCol += (1.0)/imW){
+      currentDepth = texture(depthXYZ, tex2Coord + vec2(curCol, curRow));
+      if( maxDiff < abs(currentDepth.x-centerDepthValue.x)){
         maxDiff = abs(currentDepth.x-centerDepthValue.x);
       }
+    }
+  }
 
-      curRow = (step)*W/imH;
-      currentDepth = texture(depthXYZ, tex1Coord + vec2(curCol, curRow));//check why not with LOD
-      if(minDiff< 0.0f || minDiff > abs(currentDepth.x-centerDepthValue.x)){
-        minDiff = abs(currentDepth.x-centerDepthValue.x);
-      }
-      if(maxDiff< 0.0f || maxDiff < abs(currentDepth.x-centerDepthValue.x)){
-        maxDiff = abs(currentDepth.x-centerDepthValue.x);
-      }
-  }  
 
-float diff;
+float coherentDiff = 0.0;
+float coherentDiffDistSq=0.0;
 
-  for(curRow = -(step)*W/imH; curRow <= (step)*W/imH; curRow += (step)/imH){
-
-    for(curCol = -(step)*W/imW; curCol <= (step)*W/imW; curCol += (step)/imW){
-
-      currentDepth = texture(depthXYZ, tex1Coord + vec2(curCol, curRow));//check why not with LOD
-       diff= abs(currentDepth.x-centerDepthValue.x);
-      if(abs(diff - maxDiff)*1.0f > abs(diff - minDiff)) {//diff is closer to minDiff
+  for(curRow = -(step)*W/imH; curRow <= (step)*W/imH; curRow += (1.0)/imH){
+    for(curCol = -(step)*W/imW; curCol <= (step)*W/imW; curCol += (1.0)/imW){
+      currentDepth = texture(depthXYZ, tex2Coord + vec2(curCol, curRow));//check why not with LOD
+      diff= abs(currentDepth.x-centerDepthValue.x);
+      if(abs(diff - maxDiff) > abs(diff - minDiff)) {//diff is closer to minDiff
         avgDiff = avgDiff + diff;
-              // curN = curN + 1.0f ;
+        float dis = curRow*curRow + curCol*curCol;
+        if(dis > coherentDiffDistSq){
+          coherentDiffDistSq = dis;
+          coherentDiff = diff;
+        }
+        curN = curN + 1.0f ;
       }
-      tot = tot + 1.0f;
+      //tot = tot + 1.0f;
     }
   }
   avgDiff = avgDiff / curN;
  
-
+  curN=0.0;
   float curC, curR, gaussianWeight, curWeight;
   for(curRow = -(step)*W/imH; curRow <= (step)*W/imH; curRow += (step)/imH){
 
     if(tex1Coord.x + curRow > (1.0f - offset) && tex1Coord.x + curRow < offset){
       for(curCol = -(step)*W/imW; curCol <= (step)*W/imW; curCol += (step)/imW){
         if(tex1Coord.y + curCol > (1.0f - offset) && tex1Coord.y + curCol < offset){
-          currentDepth = texture(depthXYZ, tex1Coord + vec2(curCol, curRow));//check why not with LOD
+          currentDepth = texture(depthXYZ, tex2Coord + vec2(curCol, -curRow));//check why not with LOD
           diff= abs(currentDepth.x-centerDepthValue.x);
-               // if( abs(currentDepth.x-centerDepthValue.x) < 1.0f * avgDiff){
-          if(abs(diff - maxDiff)*5.0f > abs(diff - minDiff)) {//diff is closer to minDiff
+          //if( diff < 3.0 * avgDiff){
+            if(abs(diff - maxDiff)*10.0f > abs(diff - coherentDiff)) {//diff is closer to minDiff
             curC = curCol * imW;
             curR = curRow *imH;
             gaussianWeight = (1/(sigma * 2 * M_PI)) * exp (-(curC * curC + curR * curR)/(2 * sigma * sigma));
@@ -122,8 +142,7 @@ float diff;
             //img1 = 255.0f*texture(image1, tex1Coord + vec2(curCol, curRow));
             image2Reproj = 255.0f*texture(image2Repr, tex2Coord + vec2(curCol, curRow));//check why not with LOD
             img1 = 255.0f*textureLod(image1, tex1Coord + vec2(curCol, curRow),LOD);
-            if((img1.x > 0.000000000001f ||img1.x < -0.000000000001f)){//&& (image2Reproj.x > 0.000000000001f|| image2Reproj.x < -0.000000000001f)){
-              //image2Reproj = 255.0f*textureLod(image2Repr, tex2Coord + vec2(curCol, curRow),3);
+            if((img1.x > 0.000000000001f ||img1.x < -0.000000000001f)&& image2Reproj.x > 0.000000000001f){
               sum1   += curWeight * img1.x;
               sum2   += curWeight * image2Reproj.x;
               sqsum1 += curWeight * img1.x * img1.x;
@@ -132,10 +151,12 @@ float diff;
               diff12 += curWeight * img1.x - image2Reproj.x;
               sumWeight += curWeight;
 
-              curN = curN + 1.0f ;
+            curN = curN + 1.0f ;
             }
           }
-         }
+          tot = tot + 1.0f;
+          }
+
       }
     }
   }
@@ -147,7 +168,7 @@ float diff;
 
   ncc  = var12/(sqrt(var1 * var2));
  // ncc  =float(curN)/float(tot);
-         //ncc = 0.0005*(texture(depthXYZ, tex1Coord ).x);//check why not with LOD
+      //   ncc = 0.0005*(texture(depthXYZ, tex2Coord ).x);//check why not with LOD
   mean = vec2(mean1, mean2);
   var  = vec3(var1, var2, var12);
 

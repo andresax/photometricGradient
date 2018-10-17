@@ -1,6 +1,7 @@
 #include <GradientFlowProgram.h>
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/core/core.hpp>
+#include <highgui.h>
 
 #ifndef BASE_PATH_SHADERS
 #define BASE_PATH_SHADERS  "photometricGradient/"

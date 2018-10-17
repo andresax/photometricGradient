@@ -46,8 +46,9 @@ public:
     varTexId_ = varTexId;
   }
 
-  void setDepthTexture(GLuint depthTexture) {
-    depthTexture_ = depthTexture;
+
+  void setDepthXYZ(GLuint depthXYZ) {
+    depthXYZ_ = depthXYZ;
   }
 private:
 
@@ -56,13 +57,13 @@ private:
   void createAttributes();
   void createUniforms();
 
-  GLuint framebuffer_, depthTexture_,shadowMapId_;
+  GLuint framebuffer_;
   /*uniforms id*/
   GLuint image2ReprojTexId_, imageTexId_, wId_, simGradTex_,image1simGradTex_;
   /*tex id*/
   GLuint nccTexId_, image2ReprojTex_, imageTex_, varTexId_, meanTexId_, reliabTexId_;
   /*attributes id*/
-  GLuint posId_, texCoordId_,lodId_;
+  GLuint posId_, texCoordId_,lodId_,depthXYZId_,depthXYZ_;
 
   //uniforms ID shaderSimilarityGrad_ shader
   GLint sim_mean_id_, sim_var_id_, sim_ncc_id_,sim_rel_id_, sim_img1_id_, sim_img2_id_;

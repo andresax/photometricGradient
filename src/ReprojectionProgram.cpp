@@ -1,7 +1,7 @@
 #include <ReprojectionProgram.h>
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/highgui.hpp>
-
+#include <highgui.h>
 #ifndef BASE_PATH_SHADERS
 #define BASE_PATH_SHADERS  "photometricGradient/"
 #endif

@@ -9,6 +9,7 @@ DepthMapXYZProgram::DepthMapXYZProgram(int imageWidth, int imageHeight) :
     ShaderProgram(imageWidth, imageHeight) {
   posAttribDepthId_ = -1;
   mvpId_ = -1;
+  depthTexture_ = centerid_ = shadowMap_ = framebuffer_ = imageReprojTex_ = -1;
 }
 
 DepthMapXYZProgram::~DepthMapXYZProgram() {
@@ -47,9 +48,9 @@ void DepthMapXYZProgram::compute(bool renderFrameBuf) {
   glEnable(GL_DEPTH_TEST);
   glDepthFunc(GL_LESS);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-  glEnable(GL_CULL_FACE);
-  glCullFace(GL_BACK);
+//
+//  glEnable(GL_CULL_FACE);
+//  glCullFace(GL_BACK);
   shaderManager_.enable();
 
   glUniformMatrix4fv(mvpId_, 1, GL_FALSE, &mvp_[0][0]);
@@ -58,6 +59,10 @@ void DepthMapXYZProgram::compute(bool renderFrameBuf) {
   glEnableVertexAttribArray(posAttribDepthId_);
   glBindBuffer(GL_ARRAY_BUFFER, arrayBufferObj_);
   glVertexAttribPointer(posAttribDepthId_, 4, GL_FLOAT, GL_FALSE, 0, 0);
+
+  glActiveTexture(GL_TEXTURE4);
+  glBindTexture(GL_TEXTURE_2D, depthTexture_);
+  glUniform1i(shadowMap_, 4);
 
   if (useElements_Indices) {
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementsBufferObj_);
@@ -70,12 +75,13 @@ void DepthMapXYZProgram::compute(bool renderFrameBuf) {
 
   glDisableVertexAttribArray(posAttribDepthId_);
   glBindFramebuffer(GL_FRAMEBUFFER, 0);
-  glDisable(GL_CULL_FACE);
+//  glDisable(GL_CULL_FACE);
 }
 
 void DepthMapXYZProgram::init() {
   shaderManager_.init();
   shaderManager_.addShader(GL_VERTEX_SHADER, std::string(BASE_PATH_SHADERS) + "shaders/depthXYZ_vertex_shader.glsl");
+  shaderManager_.addShader(GL_GEOMETRY_SHADER, std::string(BASE_PATH_SHADERS) + "shaders/depthXYZ_geometry_shader.glsl");
   shaderManager_.addShader(GL_FRAGMENT_SHADER, std::string(BASE_PATH_SHADERS) + "shaders/depthXYZ_fragment_shader.glsl");
   shaderManager_.finalize();
 }
@@ -85,7 +91,7 @@ void DepthMapXYZProgram::createAttributes() {
 }
 void DepthMapXYZProgram::createUniforms() {
   mvpId_ = shaderManager_.getUniformLocation("MVP");
-  shadowMap1IdReproj_ = shaderManager_.getUniformLocation("shadowMap");
+  shadowMap_ = shaderManager_.getUniformLocation("shadowMap");
   centerid_ = shaderManager_.getUniformLocation("center");
 }
 

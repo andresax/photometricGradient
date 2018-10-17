@@ -118,6 +118,7 @@ const std::vector<glm::vec3>& PhotometricGradient::twoImageGradient(const cv::Ma
   depthMapXYZProgram_->setArrayBufferObj(vertexBufferObj_, numActiveVertices_);
   static_cast<DepthMapXYZProgram *>(depthMapXYZProgram_)->setMvp(mvp1);
   static_cast<DepthMapXYZProgram *>(depthMapXYZProgram_)->setCenter(cam1.center);
+  static_cast<DepthMapXYZProgram *>(depthMapXYZProgram_)->setDepthTexture(depthTexture_);
   static_cast<DepthMapXYZProgram *>(depthMapXYZProgram_)->compute(true);
   glFinish();
   logger.endEventAndPrint("DepthXYZ ", false);
@@ -141,7 +142,6 @@ const std::vector<glm::vec3>& PhotometricGradient::twoImageGradient(const cv::Ma
   nccProgram_->setArrayBufferObj(vboSimGrad_, 4);
   nccProgram_->setElementsBufferObj(eboSimGrad_, 6);
   static_cast<NccProgram *>(nccProgram_)->setImage2ReprojTex(image2ReprojTex_);
-  static_cast<NccProgram *>(nccProgram_)->setDepthTexture(depthTexture_);
   static_cast<NccProgram *>(nccProgram_)->setDepthXYZ(depthTextureXYZ_);
   nccProgram_->populateTex(image1);
   static_cast<NccProgram *>(nccProgram_)->setWindow(window_NCC_);
@@ -149,8 +149,8 @@ const std::vector<glm::vec3>& PhotometricGradient::twoImageGradient(const cv::Ma
   nccProgram_->compute(true);
   glFinish();
   logger.endEventAndPrint("Ncc ", true);
-//  cv::Mat culo;
-//  CaptureViewPortFloat(culo,GL_RGB, 3);
+
+
 
   //*******************GRAD NCC***********************************
   if(!useSSD){
@@ -162,6 +162,7 @@ const std::vector<glm::vec3>& PhotometricGradient::twoImageGradient(const cv::Ma
     static_cast<NccGradientProgram *>(nccGradProgram_)->setVarTexId(varTex_);
     static_cast<NccGradientProgram *>(nccGradProgram_)->setMeanTexId(meanTex_);
     static_cast<NccGradientProgram *>(nccGradProgram_)->setReliabTexId(reliabilityTex_);
+    static_cast<NccGradientProgram *>(nccGradProgram_)->setDepthXYZ(depthTextureXYZ_);
     static_cast<NccGradientProgram *>(nccGradProgram_)->setWindow(window_NCC_);
     static_cast<NccGradientProgram *>(nccGradProgram_)->setLod(levelOfDetail);
     nccGradProgram_->populateTex(image1);
@@ -169,6 +170,11 @@ const std::vector<glm::vec3>& PhotometricGradient::twoImageGradient(const cv::Ma
     glFinish();
     logger.endEventAndPrint("Grad Ncc ", false);
   }
+
+//  cv::Mat culo;
+//  CaptureViewPortFloat(culo,GL_RGB, 3);
+
+
   //*******************GRAD Flow***********************************
   logger.startEvent();
   gradFlowProgram_->setArrayBufferObj(vertexBufferObj_, numActiveVertices_);
@@ -212,7 +218,8 @@ const std::vector<glm::vec3>& PhotometricGradient::twoImageGradient(const cv::Ma
   //*/
   SwapBuffers();
 //  if(useSSD)
-  sleep(20.0);
+// sleep(20.0);
+ //exit(0);
   //cv::imshow("mopinp",image1);cv::waitKey();
 
   logger.endEventAndPrint("\nTotal twoimages", true);

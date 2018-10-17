@@ -28,6 +28,10 @@ public:
     center_ = center;
   }
 
+  void setDepthTexture(GLuint depthTexture) {
+    depthTexture_ = depthTexture;
+  }
+
 private:
   void init();
 
@@ -37,7 +41,7 @@ private:
 
   GLuint posAttribDepthId_;
   GLuint mvpId_, centerid_;
-  GLuint framebuffer_,shadowMap1IdReproj_,depthTexture_;
+  GLuint framebuffer_,shadowMap_,depthTexture_;
   GLuint imageReprojTex_;
 
   glm::mat4 mvp_;

@@ -1,6 +1,7 @@
 #include <NccGradientProgram.h>
 
 #include <opencv2/imgproc/imgproc.hpp>
+#include <highgui.h>
 
 #ifndef BASE_PATH_SHADERS
 #define BASE_PATH_SHADERS  "photometricGradient/"
@@ -23,7 +24,7 @@ NccGradientProgram::NccGradientProgram(int imageWidth, int imageHeight) :
   sim_mean_id_ = sim_var_id_ = sim_ncc_id_ = sim_rel_id_ = sim_img1_id_ = sim_img2_id_ = -1;
   //attribute ID simGrad shader
   posAttribsimGradId_ = texcoordAttribsimGradId_ = imWsimid_ = imHsimid_ = -1;
-  window_ = -1;
+  window_ = depthXYZ_= depthXYZId_= -1;
 }
 
 NccGradientProgram::~NccGradientProgram() {
@@ -91,6 +92,10 @@ void NccGradientProgram::compute(bool renderFrameBuf) {
   glBindTexture(GL_TEXTURE_2D, image2ReprojTex_);
   glUniform1i(sim_img2_id_, 1);
 
+  glActiveTexture(GL_TEXTURE7);
+  glBindTexture(GL_TEXTURE_2D, depthXYZ_);
+  glUniform1i(depthXYZId_, 7);
+
   glActiveTexture(GL_TEXTURE2);
   glBindTexture(GL_TEXTURE_2D, meanTexId_);
   glUniform1i(sim_mean_id_, 2);
@@ -106,10 +111,6 @@ void NccGradientProgram::compute(bool renderFrameBuf) {
   glActiveTexture(GL_TEXTURE5);
   glBindTexture(GL_TEXTURE_2D, reliabTexId_);
   glUniform1i(sim_rel_id_, 5);
-
-  glActiveTexture(GL_TEXTURE11);
-  glBindTexture(GL_TEXTURE_2D, depthTexture_);
-  glUniform1i(shadowMapId_, 11);
 
   glEnableVertexAttribArray(posAttribsimGradId_);
   glEnableVertexAttribArray(texcoordAttribsimGradId_);
@@ -147,10 +148,10 @@ void NccGradientProgram::createUniforms() {
   sim_rel_id_ = shaderManager_.getUniformLocation("reliability");
   sim_img1_id_ = shaderManager_.getUniformLocation("img1");
   sim_img2_id_ = shaderManager_.getUniformLocation("img2");
+  depthXYZId_ = shaderManager_.getUniformLocation("depthXYZ");
   imWsimid_ = shaderManager_.getUniformLocation("imW");
   imHsimid_ = shaderManager_.getUniformLocation("imH");
   wId_ = shaderManager_.getUniformLocation("window");
   lodId_ = shaderManager_.getUniformLocation("LOD");
-  shadowMapId_ = shaderManager_.getUniformLocation("shadowMap");
 }
 }
