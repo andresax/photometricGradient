@@ -1,6 +1,5 @@
 cmake_minimum_required(VERSION 2.8.3)
 #----------------------- CMAKE MODULES ------------------------ 
-set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake/modules)  
     
     
 # ----------------------- LIBRARIES ---------------------------
@@ -11,7 +10,8 @@ find_package(GLUT REQUIRED)
 find_package(CGAL REQUIRED)
 find_package(GLEW REQUIRED)  
 find_package(OpenCV REQUIRED)
-find_package(MPRF REQUIRED) 
+find_package(glm REQUIRED)
+find_package(MPFR REQUIRED) 
 find_package(OpenMP) 
 
 if (OPENMP_FOUND) 
@@ -48,9 +48,8 @@ include_directories(  ${OPENGL_INCLUDE_DIR}
                       ${GMPXX_INCLUDE_DIR}
                       ${OpenCV_INCLUDE_DIRS} 
                       ${CGAL_INCLUDE_DIRS}
+		      ${GLM_INCLUDE_DIRS}/glm
                       ${SOIL_INCLUDE_DIRS}
-                      ./external/glm/glm/
-                      ./external/
                       include/photometricGradient/
                       include/
                       ) 
@@ -70,7 +69,6 @@ file(GLOB_RECURSE photometricGradient_H
                   )
 
 add_library(photometricGradient ${photometricGradient_SOURCE} ${photometricGradient_H})
-
 target_link_libraries(photometricGradient ${OpenCV_LIBS} 
                                             ${MPRF_LIBRARIES}
                                             ${GMPXX_LIBRARIES}
@@ -79,15 +77,8 @@ target_link_libraries(photometricGradient ${OpenCV_LIBS}
                                             ${OPENGL_LIBRARIES}
                                             ${GLEW_LIBRARIES}
                                             #${GLFW_LIBRARY}
-					                                  glfw ${GLFW_LIBRARIES}
+					    glfw ${GLFW_LIBRARIES}
+					    ${GLM_LIBRARIES}
                                             -lmpfr
                                             ${CGAL_LIBRARY}
                                             ${Boost_LIBRARIES})
-
-
-# ------------------------ INSTALLATION ------------------------
-
-
-# --------------------------------------------------------------
-
-
