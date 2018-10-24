@@ -37,4 +37,4 @@ if(CMAKE_BUILD_TYPE STREQUAL "")
 endif()
 
 # ------------------------ BUILD -------------------------------
-subdirs(src)
+add_subdirectory(src)
