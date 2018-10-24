@@ -5,9 +5,9 @@
 #include <glm/glm.hpp>
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
-#include <ShaderProgram.h>
-#include <OpenGLProgram.h>
-#include <types.hpp>
+#include "ShaderProgram.h"
+#include "OpenGLProgram.h"
+#include "types.hpp"
 
 namespace photometricGradient{
 class PhotometricGradient : public OpenGLProgram {

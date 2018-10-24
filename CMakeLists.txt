@@ -3,6 +3,8 @@ project(photometricGradient)
 set( CMAKE_BUILD_TYPE "Debug" )
 set( OpenGL_GL_PREFERENCE "GLVND" )
 set( CGAL_DO_NOT_WARN_ABOUT_CMAKE_BUILD_TYPE TRUE) 
+set( photometricGradient_BUILD_DIR "${PROJECT_SOURCE_DIR}/build/src/}" PARENT_SCOPE)
+set( photometricGradient_LIBRARIES "depthMapProgram depthMapXYZProgram gradientCollectorProgram gradientFlowProgram logger nccGradientProgram nccProgram openGLProgram photometricGradient reprojectionProgram shaderManager shaderProgram textureManager" PARENT_SCOPE)
     
 # ----------------------- LIBRARIES ---------------------------
 find_package(OpenCV REQUIRED)

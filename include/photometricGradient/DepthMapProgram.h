@@ -1,7 +1,7 @@
 #ifndef DEPTHMAPPROGRAM_H_
 #define DEPTHMAPPROGRAM_H_
 
-#include <ShaderProgram.h>
+#include "ShaderProgram.h"
 #include <glm/glm.hpp>
 
 

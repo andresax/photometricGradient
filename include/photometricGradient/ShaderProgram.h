@@ -8,7 +8,7 @@
 #ifndef SWEEPMESH_SHADERPROGRAM_H_
 #define SWEEPMESH_SHADERPROGRAM_H_
 
-#include <ShaderManager.h>
+#include "ShaderManager.h"
 #include <opencv2/core/core.hpp>
 
 class ShaderProgram {
