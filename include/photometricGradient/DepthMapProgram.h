@@ -2,7 +2,7 @@
 #define DEPTHMAPPROGRAM_H_
 
 #include <ShaderProgram.h>
-#include <glm.hpp>
+#include <glm/glm.hpp>
 
 
 namespace photometricGradient{

@@ -2,7 +2,7 @@
 
 #include <opencv2/imgproc/imgproc.hpp>
 #include <GL/glew.h>
-#include <highgui.h>
+#include <opencv2/highgui.hpp>
 #ifndef BASE_PATH_SHADERS
 #define BASE_PATH_SHADERS  "photometricGradient/"
 #endif

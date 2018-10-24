@@ -4,7 +4,7 @@
 #include <ShaderProgram.h>
 
 #include <opencv2/core/core.hpp>
-#include <glm.hpp>
+#include <glm/glm.hpp>
 
 namespace photometricGradient{
 class NccProgram  : public ShaderProgram {

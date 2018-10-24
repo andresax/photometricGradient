@@ -3,7 +3,7 @@
 
 #include <ShaderProgram.h>
 
-#include <glm.hpp>
+#include <glm/glm.hpp>
 
 namespace photometricGradient {
 class GradientFlowProgram : public ShaderProgram {

@@ -2,12 +2,12 @@
 #define PHOTOMETRICGRADIENT_H_
 
 #include <opencv2/core/core.hpp>
-#include <glm.hpp>
+#include <glm/glm.hpp>
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include <ShaderProgram.h>
 #include <OpenGLProgram.h>
-#include <photometricGradient/types.hpp>
+#include <types.hpp>
 
 namespace photometricGradient{
 class PhotometricGradient : public OpenGLProgram {

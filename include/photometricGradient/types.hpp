@@ -1,7 +1,7 @@
 #ifndef TYPESPHOTOMETRICGRADIENT_HPP_
 #define TYPESPHOTOMETRICGRADIENT_HPP_
 
-#include <glm.hpp>
+#include <glm/glm.hpp>
 #include <vector>
 #include <string>
 
