@@ -3,7 +3,6 @@ project(photometricGradient)
 set( CMAKE_BUILD_TYPE "Debug" )
 set( OpenGL_GL_PREFERENCE "GLVND" )
 set( CGAL_DO_NOT_WARN_ABOUT_CMAKE_BUILD_TYPE TRUE) 
-set( photometricGradient_BUILD_DIR "${PROJECT_SOURCE_DIR}/build/src/}" PARENT_SCOPE)
     
 if (OPENMP_FOUND) 
     set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
