@@ -2,11 +2,10 @@
 #define M_PI 3.1415926535897932384626433832795
 
 in vec4 projector1TexCoord;
-in vec2 tex2Coord;   /*2D coordinate in camera 1*/
-in vec2 tex1Coord;   /*2D coordinate in camera 1*/
+in vec2 tex2Coord;   
+in vec2 tex1Coord;  
 in vec4 shadowCoord1;
 
-/*output texture 0.0f...255.0f*/
 layout(location = 0) out float ncc;
 layout(location = 1) out vec3 var;
 layout(location = 2) out vec2 mean;
@@ -167,8 +166,6 @@ float coherentDiffDistSq=0.0;
   float var12 = prod12/sumWeight - mean1*mean2;
 
   ncc  = var12/(sqrt(var1 * var2));
- // ncc  =float(curN)/float(tot);
-      //   ncc = 0.0005*(texture(depthXYZ, tex2Coord ).x);//check why not with LOD
   mean = vec2(mean1, mean2);
   var  = vec3(var1, var2, var12);
 

@@ -111,8 +111,6 @@ void GradientFlowProgram::compute(bool renderFrameBuf) {
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   glEnable(GL_DEPTH_TEST);
   glDepthFunc(GL_LESS);
-//  glEnable(GL_POLYGON_OFFSET_FILL);
-//  glPolygonOffset(0.4,1.0);
 
   shaderManager_.enable();
 
@@ -123,7 +121,6 @@ void GradientFlowProgram::compute(bool renderFrameBuf) {
     glUniform1f(haswid_, 1.0);
   else
     glUniform1f(haswid_, -1.0);
-  //std::cout<<""<<t.x<<" , "<<t.y<<",  "<<t.z<<""<<std::endl;
   glUniformMatrix4fv(mvp1ID_, 1, GL_FALSE, &mvp1_[0][0]);
   glUniformMatrix4fv(mvp2ID_, 1, GL_FALSE, &mvp2_[0][0]);
   glUniformMatrix4fv(mvp1OrigID_, 1, GL_FALSE, &mvp1Orig_[0][0]);

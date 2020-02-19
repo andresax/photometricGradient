@@ -4,8 +4,8 @@
 #define M_PI 3.1415926535897932384626433832795
 
 in vec4 projector1TexCoord;
-in vec2 tex2Coord;   /*2D coordinate in camera 1*/
-in vec2 tex1Coord;   /*2D coordinate in camera 1*/
+in vec2 tex2Coord;   
+in vec2 tex1Coord;  
 
 //layout(location = 0) 
 layout(location = 0) out float d2mcc;
@@ -183,18 +183,4 @@ float coherentDiffDistSq=0.0;
 
   vec4 rel = texture(reliability, tex2Coord );
   d2mcc = rel.x * (aTot * I1.x + bTot * I2.x + cTot);
-  //d2mcc = 0.0005*(texture(depthXYZ, tex2Coord ).x);
-   //d2mcc = (aTot * I1.x + bTot * I2.x + cTot);
-// d2mcc  =float(curN)/float(tot);
-
-      // d2mcc = texture(mean, tex2Coord).x/255.0;
-  //d2mcc = (aTot * I1.x + bTot * I2.x + cTot);
-  //d2mcc = abs(aTot);
-
-
-/*
-        means = texture(mean, tex2Coord );
-        vars = texture(var, tex2Coord );
-        nccs = texture(ncc, tex2Coord );
-  d2mcc = nccs.x/1.0;*/
 }

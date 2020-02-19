@@ -34,9 +34,6 @@ void DepthMapProgram::computeDepthMap(const GLuint &framebufferDepth, const glm:
   glDepthFunc(GL_LESS);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-
-//  glEnable(GL_CULL_FACE);
-//  glCullFace(GL_FRONT);
   shaderManager_.enable();
 
   glUniformMatrix4fv(mvpId_, 1, GL_FALSE, &mvp[0][0]);
@@ -56,7 +53,6 @@ void DepthMapProgram::computeDepthMap(const GLuint &framebufferDepth, const glm:
 
   glDisableVertexAttribArray(posAttribDepthId_);
   glBindFramebuffer(GL_FRAMEBUFFER, 0);
-//  glCullFace(GL_BACK);
 }
 
 void DepthMapProgram::init() {

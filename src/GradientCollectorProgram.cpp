@@ -26,8 +26,6 @@ void GradientCollectorProgram::compute(bool show) {
   glEnable(GL_DEPTH_TEST);
   glDepthFunc(GL_LESS);
 
-//  glEnable(GL_POLYGON_OFFSET_FILL);
-//  glPolygonOffset(0.4,1.0);
   shaderManager_.enable();
 
   glActiveTexture(GL_TEXTURE5);

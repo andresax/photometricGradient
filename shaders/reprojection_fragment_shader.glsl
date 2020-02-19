@@ -19,7 +19,6 @@ void main(){
 
   float bias1 = clamp(0.9*tan(acos(dot(normalFacet, positionP-c1))),0.0f,0.9);
   float bias2 = clamp(0.9*tan(acos(dot(normalFacet, positionP-c2))),0.0f,0.9);
-  //float bias2 = max(0.5 * (1.0 - dot(normalFacet, c2-positionP)), 0.05);
   vec4 shadowCoord1Biased = shadowCoord1;
   vec4 shadowCoord2Biased = shadowCoord2;
   shadowCoord1Biased.z -= bias1;

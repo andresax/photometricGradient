@@ -36,7 +36,7 @@ void OpenGLProgram::CaptureViewPort(cv::Mat &capture, GLenum format, GLuint ch) 
   bits = new GLubyte[w * ch * h];
 
   //read pixel from frame buffer
-  glPixelStorei(GL_PACK_ALIGNMENT, 1); //or glPixelStorei(GL_PACK_ALIGNMENT,4);
+  glPixelStorei(GL_PACK_ALIGNMENT, 1);
   glPixelStorei(GL_PACK_ROW_LENGTH, 0);
   glPixelStorei(GL_PACK_SKIP_ROWS, 0);
   glPixelStorei(GL_PACK_SKIP_PIXELS, 0);

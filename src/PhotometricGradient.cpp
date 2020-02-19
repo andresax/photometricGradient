@@ -171,9 +171,6 @@ const std::vector<glm::vec3>& PhotometricGradient::twoImageGradient(const cv::Ma
     logger.endEventAndPrint("Grad Ncc ", false);
   }
 
-//  cv::Mat culo;
-//  CaptureViewPortFloat(culo,GL_RGB, 3);
-
 
   //*******************GRAD Flow***********************************
   logger.startEvent();

@@ -48,9 +48,6 @@ void DepthMapXYZProgram::compute(bool renderFrameBuf) {
   glEnable(GL_DEPTH_TEST);
   glDepthFunc(GL_LESS);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-//
-//  glEnable(GL_CULL_FACE);
-//  glCullFace(GL_BACK);
   shaderManager_.enable();
 
   glUniformMatrix4fv(mvpId_, 1, GL_FALSE, &mvp_[0][0]);
@@ -75,7 +72,6 @@ void DepthMapXYZProgram::compute(bool renderFrameBuf) {
 
   glDisableVertexAttribArray(posAttribDepthId_);
   glBindFramebuffer(GL_FRAMEBUFFER, 0);
-//  glDisable(GL_CULL_FACE);
 }
 
 void DepthMapXYZProgram::init() {

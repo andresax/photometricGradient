@@ -13,9 +13,6 @@ ShaderProgram::ShaderProgram(int imageWidth, int imageHeight) {
 ShaderProgram::~ShaderProgram() {
 }
 
-
-
-
 void ShaderProgram::initializeProgram() {
   init();
 
