@@ -150,7 +150,7 @@ void main(){
   int end=0;
   vec3 area = vec3(0.0);
   float step = (LOD+1);
-  //step = (1);
+  step = (1);
 
   float stepX = step/imW; 
   float stepY = step/imH;

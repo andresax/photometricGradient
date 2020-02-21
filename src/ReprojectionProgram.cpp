@@ -1,7 +1,6 @@
 #include <ReprojectionProgram.h>
 #include <opencv2/imgproc/imgproc.hpp>
-#include <opencv2/highgui.hpp>
-#include <highgui.h>
+#include <opencv2/highgui/highgui.hpp>
 #ifndef BASE_PATH_SHADERS
 #define BASE_PATH_SHADERS  "photometricGradient/"
 #endif
@@ -24,11 +23,12 @@ void ReprojectionProgram::initTex() {
 void ReprojectionProgram::populateTex(const cv::Mat& image) {
   cv::Mat image2Gray;
   if (image.channels() > 1) {
-    cv::cvtColor(image, image2Gray, CV_RGB2GRAY);
+    cv::cvtColor(image, image2Gray, cv::COLOR_RGB2GRAY);
   } else {
     image2Gray = image;
   }
   glBindTexture(GL_TEXTURE_2D, imageTex_);
+  //glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, imageWidth_, imageHeight_, 0, GL_RED, GL_UNSIGNED_BYTE, image2Gray.data);
   gluBuild2DMipmaps(GL_TEXTURE_2D, GL_RED, imageWidth_, imageHeight_, GL_RED, GL_UNSIGNED_BYTE, image2Gray.data);
   image2Gray.release();
 }
@@ -50,6 +50,10 @@ void ReprojectionProgram::compute(bool renderFrameBuf) {
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   glEnable(GL_DEPTH_TEST);
   glDepthFunc(GL_LESS);
+//  glEnable(GL_CULL_FACE);
+//  glCullFace(GL_BACK);
+//  glEnable(GL_POLYGON_OFFSET_FILL);
+//  glPolygonOffset(0.4,1.0);
 
   shaderManager_.enable();
 

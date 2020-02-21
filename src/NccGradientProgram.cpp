@@ -1,7 +1,7 @@
 #include <NccGradientProgram.h>
 
 #include <opencv2/imgproc/imgproc.hpp>
-#include <highgui.h>
+#include <opencv2/highgui/highgui.hpp>
 
 #ifndef BASE_PATH_SHADERS
 #define BASE_PATH_SHADERS  "photometricGradient/"
@@ -34,7 +34,7 @@ void NccGradientProgram::populateTex(const cv::Mat& image) {
 
   cv::Mat image1Gray;
   if (image.channels() > 1) {
-    cv::cvtColor(image, image1Gray, CV_RGB2GRAY);
+    cv::cvtColor(image, image1Gray, cv::COLOR_RGB2GRAY);
   } else {
     image1Gray = image;
   }

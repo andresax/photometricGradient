@@ -8,7 +8,7 @@
 #include <GradientCollectorProgram.h>
 #include <Logger.h>
 #include <unistd.h>
-#include <opencv2/highgui.hpp>
+#include <opencv2/highgui/highgui.hpp>
 
 namespace photometricGradient{
 PhotometricGradient::PhotometricGradient(int imageWidth, int imageHeight, GLFWwindow* window) {
@@ -170,6 +170,7 @@ const std::vector<glm::vec3>& PhotometricGradient::twoImageGradient(const cv::Ma
     glFinish();
     logger.endEventAndPrint("Grad Ncc ", false);
   }
+
 
 
   //*******************GRAD Flow***********************************

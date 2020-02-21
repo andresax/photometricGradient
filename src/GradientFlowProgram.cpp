@@ -1,7 +1,7 @@
 #include <GradientFlowProgram.h>
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/core/core.hpp>
-#include <highgui.h>
+#include <opencv2/highgui/highgui.hpp>
 
 #ifndef BASE_PATH_SHADERS
 #define BASE_PATH_SHADERS  "photometricGradient/"
@@ -21,7 +21,7 @@ void GradientFlowProgram::populateTex(const cv::Mat &image1, const cv::Mat &imag
   /// Generate grad_x and grad_y
   cv::Mat imageGray, image1Gray, gradXGray, gradYGray;
   if (image2.channels() > 1) {
-    cv::cvtColor(image2, imageGray, CV_RGB2GRAY);
+    cv::cvtColor(image2, imageGray,  cv::COLOR_RGB2GRAY);
   } else {
     imageGray = image2;
   }
@@ -31,7 +31,7 @@ void GradientFlowProgram::populateTex(const cv::Mat &image1, const cv::Mat &imag
   cv::Scharr(imageGray, gradYGray, CV_32F, 0, 1);
 
   if (image1.channels() > 1) {
-    cv::cvtColor(image1, image1Gray, CV_RGB2GRAY);
+    cv::cvtColor(image1, image1Gray,  cv::COLOR_RGB2GRAY);
   } else {
     image1Gray = image1;
   }
@@ -111,6 +111,8 @@ void GradientFlowProgram::compute(bool renderFrameBuf) {
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   glEnable(GL_DEPTH_TEST);
   glDepthFunc(GL_LESS);
+//  glEnable(GL_POLYGON_OFFSET_FILL);
+//  glPolygonOffset(0.4,1.0);
 
   shaderManager_.enable();
 
@@ -121,6 +123,7 @@ void GradientFlowProgram::compute(bool renderFrameBuf) {
     glUniform1f(haswid_, 1.0);
   else
     glUniform1f(haswid_, -1.0);
+  //std::cout<<""<<t.x<<" , "<<t.y<<",  "<<t.z<<""<<std::endl;
   glUniformMatrix4fv(mvp1ID_, 1, GL_FALSE, &mvp1_[0][0]);
   glUniformMatrix4fv(mvp2ID_, 1, GL_FALSE, &mvp2_[0][0]);
   glUniformMatrix4fv(mvp1OrigID_, 1, GL_FALSE, &mvp1Orig_[0][0]);
