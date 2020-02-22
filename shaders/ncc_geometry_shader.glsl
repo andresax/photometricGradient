@@ -4,14 +4,14 @@ layout (triangles) in;
 layout (triangle_strip, max_vertices=3) out;
 
 
-in vec4 projector1TexCoordV[];   /*2D coordinate in camera 1*/
-in vec2 tex2CoordV[];   /*2D coordinate in camera 1*/
-in vec2 tex1CoordV[];   /*2D coordinate in camera 1*/
+in vec4 projector1TexCoordV[];
+in vec2 tex2CoordV[];
+in vec2 tex1CoordV[];
 
 
-out vec4 projector1TexCoord;   /*2D coordinate in camera 1*/
-out vec2 tex2Coord;   /*2D coordinate in camera 1*/
-out vec2 tex1Coord;   /*2D coordinate in camera 1*/
+out vec4 projector1TexCoord;   
+out vec2 tex2Coord;   
+out vec2 tex1Coord;  
 
 
 uniform float imW;

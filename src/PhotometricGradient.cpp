@@ -215,10 +215,8 @@ const std::vector<glm::vec3>& PhotometricGradient::twoImageGradient(const cv::Ma
 
   //*/
   SwapBuffers();
-//  if(useSSD)
-// sleep(20.0);
- //exit(0);
-  //cv::imshow("mopinp",image1);cv::waitKey();
+
+ // sleep(3.0);
 
   logger.endEventAndPrint("\nTotal twoimages", true);
 

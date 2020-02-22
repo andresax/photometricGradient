@@ -150,7 +150,7 @@ void main(){
   int end=0;
   vec3 area = vec3(0.0);
   float step = (LOD+1);
-  step = (1);
+ // step = 1;
 
   float stepX = step/imW; 
   float stepY = step/imH;
@@ -201,7 +201,6 @@ void main(){
 
     float bias1 = clamp(0.9*tan(acos(dot(normal, positionPoint.xyz-c1))),0.0f,0.9);
     float bias2 = clamp(0.9*tan(acos(dot(normal, positionPoint.xyz-c2))),0.0f,0.9);
-    //float bias2 = max(0.5 * (1.0 - dot(normalFacet, c2-positionP)), 0.05);
     vec4 shadowCoord1Biased = shadowCoordV[i];
     vec4 shadowCoord2Biased = shadowCoord2V[i];
     shadowCoord1Biased.z -= bias1;
@@ -214,7 +213,6 @@ void main(){
     else{
 
       sumGradient = shadowCoeff * shadowCoeff2 * vec3(sumGradientTot[i].xyz);//abs(twiceSignedArea/2));
-        //    sumGradient = shadowCoeff * shadowCoeff2 * vec3(sumGradientTot[i].xyz)/abs(twiceSignedArea/2);
     }
     EmitVertex();
 

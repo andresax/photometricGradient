@@ -4,10 +4,9 @@
 #define M_PI 3.1415926535897932384626433832795
 
 in vec4 projector1TexCoord;
-in vec2 tex2Coord;   /*2D coordinate in camera 1*/
-in vec2 tex1Coord;   /*2D coordinate in camera 1*/
+in vec2 tex2Coord;
+in vec2 tex1Coord;
 
-//layout(location = 0) 
 layout(location = 0) out float d2mcc;
 
 uniform float  imW;
@@ -38,7 +37,7 @@ void main(){
 
   float curRow, curCol;
   float step = (LOD+1);
-  step=1;
+  //step=1;
   float minDiff = -1.0f;
   float maxDiff = -1.0f;
 
@@ -48,66 +47,7 @@ void main(){
   float avgDiff =  0.0f;
   vec4 currentDepth;
 
-  vec4 centerDepthValue = texture(depthXYZ, tex2Coord);//check why not with LOD
-  // for(curRow = -(step)*W/imH; curRow <= (step)*W/imH; curRow += (step)/imH){
-  //   curCol = -(step)*W/imW;
-  //   currentDepth = texture(depthXYZ, tex1Coord + vec2(curCol, curRow));//check why not with LOD
-  //   if(minDiff< 0.0f || minDiff > abs(currentDepth.x-centerDepthValue.x)){
-  //     minDiff = abs(currentDepth.x-centerDepthValue.x);
-  //   }
-  //   if(maxDiff< 0.0f || maxDiff < abs(currentDepth.x-centerDepthValue.x)){
-  //     maxDiff = abs(currentDepth.x-centerDepthValue.x);
-  //   }
-
-  //   curCol = (step)*W/imW;
-  //   currentDepth = texture(depthXYZ, tex1Coord + vec2(curCol, curRow));//check why not with LOD
-  //   if(minDiff< 0.0f || minDiff > abs(currentDepth.x-centerDepthValue.x)){
-  //     minDiff = abs(currentDepth.x-centerDepthValue.x);
-  //   }
-  //   if(maxDiff< 0.0f || maxDiff < abs(currentDepth.x-centerDepthValue.x)){
-  //     maxDiff = abs(currentDepth.x-centerDepthValue.x);
-  //   }
-  // } 
-
-
-  // for(curCol = -(step)*W/imW; curCol <= (step)*W/imW; curCol += (step)/imW){
-  //     curRow = -(step)*W/imH;
-  //     currentDepth = texture(depthXYZ, tex1Coord + vec2(curCol, curRow));//check why not with LOD
-  //     if(minDiff< 0.0f || minDiff > abs(currentDepth.x-centerDepthValue.x)){
-  //       minDiff = abs(currentDepth.x-centerDepthValue.x);
-  //     }
-  //     if(maxDiff< 0.0f || maxDiff < abs(currentDepth.x-centerDepthValue.x)){
-  //       maxDiff = abs(currentDepth.x-centerDepthValue.x);
-  //     }
-
-  //     curRow = (step)*W/imH;
-  //     currentDepth = texture(depthXYZ, tex1Coord + vec2(curCol, curRow));//check why not with LOD
-  //     if(minDiff< 0.0f || minDiff > abs(currentDepth.x-centerDepthValue.x)){
-  //       minDiff = abs(currentDepth.x-centerDepthValue.x);
-  //     }
-  //     if(maxDiff< 0.0f || maxDiff < abs(currentDepth.x-centerDepthValue.x)){
-  //       maxDiff = abs(currentDepth.x-centerDepthValue.x);
-  //     }
-  // }  
-
-// float diff;
-
-//   for(curRow = -(step)*W/imH; curRow <= (step)*W/imH; curRow += (step)/imH){
-
-//     for(curCol = -(step)*W/imW; curCol <= (step)*W/imW; curCol += (step)/imW){
-
-//       currentDepth = texture(depthXYZ, tex1Coord + vec2(curCol, curRow));//check why not with LOD
-//        diff= abs(currentDepth.x-centerDepthValue.x);
-//       if(abs(diff - maxDiff)*1.0f > abs(diff - minDiff)) {//diff is closer to minDiff
-//         avgDiff = avgDiff + diff;
-//               // curN = curN + 1.0f ;
-//       }
-//       tot = tot + 1.0f;
-//     }
-//   }
-//   avgDiff = avgDiff / curN;
- 
-
+  vec4 centerDepthValue = texture(depthXYZ, tex2Coord);//TODO:check why not with LOD
   float diff;
   minDiff = 0.0;
 
@@ -154,26 +94,23 @@ float coherentDiffDistSq=0.0;
       if(tex2Coord.x + curCol>0 && tex2Coord.x + curCol<imW){
         currentDepth = texture(depthXYZ, tex2Coord + vec2(curCol, curRow));//check why not with LOD
         diff= abs(currentDepth.x-centerDepthValue.x);
-             // if( abs(currentDepth.x-centerDepthValue.x) < 1.0f * avgDiff){
           if(abs(diff - maxDiff)*10.0f > abs(diff - coherentDiff)) {//diff is closer to minDiff
-          float  curC = curCol * imW;
-          float  curR = curRow *imH;
-          //float  gaussianWeight = (1/(sigma * 2 * M_PI)) * exp (-(curC * curC + curR * curR)/(2 * sigma * sigma));
-          float gaussianWeight = (1/(sigma * 2*M_PI)) * exp (-(curCol*curCol + curRow * curRow)/(2*sigma*sigma));
-          float curWeight = gaussianWeight;
-          // curWeight = 1.0;
+            float  curC = curCol * imW;
+            float  curR = curRow *imH;
+            float gaussianWeight = (1/(sigma * 2*M_PI)) * exp (-(curCol*curCol + curRow * curRow)/(2*sigma*sigma));
+            float curWeight = gaussianWeight;
+            
+            means = texture(mean, tex2Coord + vec2(curCol, curRow));
+            vars = texture(var, tex2Coord + vec2(curCol, curRow));
+            nccs = texture(ncc, tex2Coord + vec2(curCol, curRow));
 
-          means = texture(mean, tex2Coord + vec2(curCol, curRow));
-          vars = texture(var, tex2Coord + vec2(curCol, curRow));
-          nccs = texture(ncc, tex2Coord + vec2(curCol, curRow));
+            a += curWeight * -1.0/(sqrt(vars.x * vars.y));
+            b += curWeight * nccs.x/vars.y;
+            c += curWeight * (means.x/(sqrt(vars.x * vars.y)) - (means.y * nccs.x)/(vars.y));
 
-          a += curWeight * -1.0/(sqrt(vars.x * vars.y));
-          b += curWeight * nccs.x/vars.y;
-          c += curWeight * (means.x/(sqrt(vars.x * vars.y)) - (means.y * nccs.x)/(vars.y));
-
-          sumWeight += curWeight;
-        curN = curN + 1.0f ;
-        }
+            sumWeight += curWeight;
+            curN = curN + 1.0f ;
+          }
         tot = tot + 1.0f;
       }
     }
@@ -184,18 +121,4 @@ float coherentDiffDistSq=0.0;
 
   vec4 rel = texture(reliability, tex2Coord );
   d2mcc = rel.x * (aTot * I1.x + bTot * I2.x + cTot);
-  //d2mcc = 0.0005*(texture(depthXYZ, tex2Coord ).x);
-   //d2mcc = (aTot * I1.x + bTot * I2.x + cTot);
-// d2mcc  =float(curN)/float(tot);
-
-      // d2mcc = texture(mean, tex2Coord).x/255.0;
-  //d2mcc = (aTot * I1.x + bTot * I2.x + cTot);
-  //d2mcc = abs(aTot);
-
-
-/*
-        means = texture(mean, tex2Coord );
-        vars = texture(var, tex2Coord );
-        nccs = texture(ncc, tex2Coord );
-  d2mcc = nccs.x/1.0;*/
 }

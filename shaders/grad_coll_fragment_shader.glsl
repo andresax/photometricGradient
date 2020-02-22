@@ -15,6 +15,6 @@ void main(){
   float shadowCoeff = textureProj(shadowMap, shadowCoord);
   float shadowCoeff2 = textureProj(shadowMap2, shadowCoord2);
   
-  color = vec4(sumGradient.x, sumGradient.y,sumGradient.z,1.0);
-  //color = shadowCoeff2 * shadowCoeff* vec4(sumGradient.x, sumGradient.y,sumGradient.z,1.0);
+  //color = vec4(sumGradient.x, sumGradient.y,sumGradient.z,1.0);
+  color = shadowCoeff2 * shadowCoeff* vec4(sumGradient.x, sumGradient.y,sumGradient.z,1.0);
 }

@@ -2,8 +2,8 @@
 #define M_PI 3.1415926535897932384626433832795
 
 in vec4 projector1TexCoord;
-in vec2 tex2Coord;   /*2D coordinate in camera 1*/
-in vec2 tex1Coord;   /*2D coordinate in camera 1*/
+in vec2 tex2Coord;  
+in vec2 tex1Coord;   
 in vec4 shadowCoord1;
 
 /*output texture 0.0f...255.0f*/
@@ -34,7 +34,7 @@ void main(){
   float sum1= 0.0f, sum2 = 0.0f, sqsum1 = 0.0f, sqsum2 = 0.0f, prod12 = 0.0f, diff12 = 0.0f;
   float offset = 0.995f;
   float step = LOD + 1.0f;
- step = (1);
+ //step = 1;
   float curRow, curCol;
   float sigma = (window / 2.0f);//*(LOD+1);
   float minDiff = -1.0f;
@@ -46,49 +46,6 @@ void main(){
   vec4 currentDepth;
 
   vec4 centerDepthValue = texture(depthXYZ, tex2Coord);
-
-  // for(curRow = -(step)*W/imH; curRow <= (step)*W/imH; curRow += (step)/imH){
-  //   curCol = -(step)*W/imW;
-  //   currentDepth = texture(depthXYZ, tex2Coord + vec2(curCol, curRow));//check why not with LOD
-  //   if(minDiff< 0.0f || minDiff > abs(currentDepth.x-centerDepthValue.x)){
-  //     minDiff = abs(currentDepth.x-centerDepthValue.x);
-  //   }
-  //   if(maxDiff< 0.0f || maxDiff < abs(currentDepth.x-centerDepthValue.x)){
-  //     maxDiff = abs(currentDepth.x-centerDepthValue.x);
-  //   }
-
-  //   curCol = (step)*W/imW;
-  //   currentDepth = texture(depthXYZ, tex2Coord + vec2(curCol, curRow));//check why not with LOD
-  //   if(minDiff< 0.0f || minDiff > abs(currentDepth.x-centerDepthValue.x)){
-  //     minDiff = abs(currentDepth.x-centerDepthValue.x);
-  //   }
-  //   if(maxDiff< 0.0f || maxDiff < abs(currentDepth.x-centerDepthValue.x)){
-  //     maxDiff = abs(currentDepth.x-centerDepthValue.x);
-  //   }
-  // } 
-
-
-  // for(curCol = -(step)*W/imW; curCol <= (step)*W/imW; curCol += (step)/imW){
-  //     curRow = -(step)*W/imH;
-  //     currentDepth = texture(depthXYZ, tex2Coord + vec2(curCol, curRow));//check why not with LOD
-  //     if(minDiff< 0.0f || minDiff > abs(currentDepth.x-centerDepthValue.x)){
-  //       minDiff = abs(currentDepth.x-centerDepthValue.x);
-  //     }
-  //     if(maxDiff< 0.0f || maxDiff < abs(currentDepth.x-centerDepthValue.x)){
-  //       maxDiff = abs(currentDepth.x-centerDepthValue.x);
-  //     }
-
-  //     curRow = (step)*W/imH;
-  //     currentDepth = texture(depthXYZ, tex2Coord + vec2(curCol, curRow));
-  //     if(minDiff< 0.0f || minDiff > abs(currentDepth.x-centerDepthValue.x)){
-  //       minDiff = abs(currentDepth.x-centerDepthValue.x);
-  //     }
-  //     if(maxDiff< 0.0f || maxDiff < abs(currentDepth.x-centerDepthValue.x)){
-  //       maxDiff = abs(currentDepth.x-centerDepthValue.x);
-  //     }
-  // }  
-
-
   float diff;
   minDiff = 0.0;
 
