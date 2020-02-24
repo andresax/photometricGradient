@@ -186,12 +186,12 @@ void GradientFlowProgram::createUniforms() {
   cam2PositionId_ = shaderManager_.getUniformLocation("cam2Position");
   mvp1ID_ = shaderManager_.getUniformLocation("MVPcam1");
   mvp2ID_ = shaderManager_.getUniformLocation("MVPcam2");
-  mvp1OrigID_ = shaderManager_.getUniformLocation("MVPcam1Orig");
+  // mvp1OrigID_ = shaderManager_.getUniformLocation("MVPcam1Orig");
   mvp2OrigID_ = shaderManager_.getUniformLocation("MVPcam2Orig");
-  pointToCamID_ = shaderManager_.getUniformLocation("pointTocamMat2");
+  // pointToCamID_ = shaderManager_.getUniformLocation("pointTocamMat2");
 
-  mvpCameraMoving_ = shaderManager_.getUniformLocation("MVP2");
-  image1Id_ = shaderManager_.getUniformLocation("image1");
+  // mvpCameraMoving_ = shaderManager_.getUniformLocation("MVP2");
+  // image1Id_ = shaderManager_.getUniformLocation("image1");
   shadowMapId_ = shaderManager_.getUniformLocation("shadowMap");
   shadowMapId2_ = shaderManager_.getUniformLocation("shadowMap2");
 
@@ -199,6 +199,6 @@ void GradientFlowProgram::createUniforms() {
   gradimage2xId_ = shaderManager_.getUniformLocation("gradimage2x");
   gradSimilarityImgId_ = shaderManager_.getUniformLocation("gradSimilarityImg");
   lod_ = shaderManager_.getUniformLocation("LOD");
-  haswid_ = shaderManager_.getUniformLocation("hasW");
+  // haswid_ = shaderManager_.getUniformLocation("hasW");
 }
 }

@@ -21,7 +21,7 @@ uniform  float modeSSD;
 uniform sampler2D image1;
 uniform sampler2D image2Repr;
 uniform sampler2D depthXYZ;
-uniform sampler2D shadowMap;
+// uniform sampler2D shadowMap;
 
 void main(){
 

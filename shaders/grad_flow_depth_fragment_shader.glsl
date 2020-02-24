@@ -20,10 +20,10 @@ uniform sampler2DShadow shadowMap2;
 uniform vec3 camPosition;
 uniform vec3 cam2Position;
 uniform mat4 MVPcam2;
-uniform mat4 pointTocamMat2;
+// uniform mat4 pointTocamMat2;
 uniform mat4 MVPcam2Orig;
 uniform float LOD;
-uniform float hasW;
+// uniform float hasW;
 
 void main(){
 
@@ -46,7 +46,7 @@ void main(){
   float shadowCoeff2 = textureProj(shadowMap2, shadowCoord2Biased);
 
   vec4 positionPointToCam1= positionPoint;
-  vec4 positionToCam = pointTocamMat2 * positionPoint;
+  // vec4 positionToCam = pointTocamMat2 * positionPoint;
   vec4 vecNorm = positionPoint;
   //gradient of second cam matrix projection computation
 
@@ -67,7 +67,6 @@ void main(){
 
   //compute vector d
   camPointVector = (positionPointToCam1 - vec4(camPosition,1.0)).xyz;
-  camPointVector2 = (positionPointToCam1 - vec4(cam2Position,1.0)).xyz;
 
   float d_z = (positionPointToCam1).z;
 
@@ -84,57 +83,11 @@ void main(){
   float denomGrad = camPointVector.x*normalFacet.x + camPointVector.y*normalFacet.y + camPointVector.z*normalFacet.z;
   float zeroapprox = 0.000000000000001;
 
-  gradientContribution =  shadowCoeff * shadowCoeff2 *vec4(1.0,0.0,0.0,1.0);
   if(denomGrad> zeroapprox || denomGrad < -zeroapprox ){
-
-    /*vec3 x = camPointVector;
-    vec3 y = camPointVector2;
-    float angle = 2*atan(length(x * length(y) - length(x) * y), length(x * length(y) + length(x) * y));
-    float mean = 45*M_PI/180;
-    float stddev = M_PI/2;
-    float coeff = min(1,1.05*exp(-((mean-angle)*(mean-angle))/(2*stddev*stddev)) );*/
-    //float coeff = (1/sqrt(2*M_PI*stddev*stddev))*exp(-((mean-angle)*(mean-angle))/(2*stddev*stddev));
-
-    // vec3 x1 = normalize(camPointVector);
-    // vec3 x2 = normalize(camPointVector2);
-    // vec3 planeNormal = cross(x1,x2);
-
-    // vec3 endNormal = positionPoint.xyz + normalFacet;
-    // float pointPlaneDist = dot(planeNormal,normalFacet);
-    // vec3 projected_point = endNormal - pointPlaneDist*planeNormal;
-    // vec3 normalProj = projected_point - positionPoint.xyz;
-
-    // vec3 y = normalProj;
-
-    // float ang12 = 2 * atan(length(x1 * length(y) - length(x1) * y), length(x1 * length(y) + length(x1) * y)); 
-
-    // float ang1N = 2 * atan(length(x1 * length(y) - length(x1) * y), length(x1 * length(y) + length(x1) * y));
-    // vec3 cross1N = cross(x1, y);
-    
-    // float ang2N = 2 * atan(length(x2 * length(y) - length(x2) * y), length(x2 * length(y) + length(x2) * y));
-    // vec3 cross2N = cross(x2, y);
-
-    // int sign = 1;
-    // if (dot(cross1N, cross2N) < 0) { // Or > 0
-    //   sign = -1;
-    // }
-    // float diffAngle = ang1N + sign*ang2N;
-    // float mean = 50*M_PI/180;
-    // float stddev = M_PI/6;
-    // float stddev2 = M_PI/8;
-    // float coeffBaseline = exp(-((mean-ang12)*(mean-ang12))/(2*stddev*stddev));
-    // float coeffNormal = exp(-((0-diffAngle)*(0-diffAngle))/(2*stddev2*stddev2));
-    // float coeff = 0.25 * min(1,coeffBaseline ) + 0.75*min(1,coeffNormal );
-    // if(hasW>0){
-    // gradientContribution = (3.14/1.0339)*coeff*shadowCoeff * shadowCoeff2 * f12/denomGrad * vec4(-normalFacet, 1.0);
-    // }else{
       gradientContribution =  shadowCoeff * shadowCoeff2 * f12/denomGrad * vec4(-normalFacet, 1.0);
-    // }
-
   }else{
     gradientContribution =  shadowCoeff * shadowCoeff2 *vec4(0.0,0.0,0.0,1.0);
   }
   
-  //gradientContribution = vec4(gradSimilarity.x,0.0,0.0,1.0 );
 
 }
